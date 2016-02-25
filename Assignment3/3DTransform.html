@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+	<meta charset="utf-8" />
+        <title>3DTransform</title>
+        <link rel="stylesheet" href="assignments.css" />
+
+        <style>
+                #assignments {
+                  perspective: 1000px;
+                  perspective-origin: center left;
+                }
+
+                svg{
+                  transform: rotate3d(-.5, .5, 0, 55deg);
+                }
+
+                .rectangle{
+                  fill: red;
+                  opacity: 0.5;
+                }
+
+                .circle1, .circle2, .circle3{
+                  stroke: black;
+                  fill: green;
+                  opacity: 0.5;
+                }
+
+                .circle1:hover, .circle2:hover, .circle3:hover {
+                  opacity: 1;
+                }
+
+                .circle1:active, .circle2:active, .circle3:active {
+                  fill: blue;
+                  opacity: 0.5;
+                }
+
+                .triangle1, .triangle2, .triangle3 {
+                  stroke: #660000; 
+                  fill: #cc3333;
+                  opacity: 0.5;
+                }
+
+                .triangle1:hover, .triangle2:hover, .triangle3:hover {
+                  opacity: 1;
+                }
+
+                .triangle1:active, .triangle2:active, .triangle3:active {
+                  fill: blue;
+                  opacity: 0.5;
+                }
+        </style>
+
+    </head>
+
+    <body>
+	<div id="title">
+             <h3>Jeremiah Crowley</h3>
+             <h4>Assignment 3: CSS Animation</h4>
+        </div>
+	<div id="box" class="box">
+            <div class="area">
+                <ul>
+                    <li>3D Transform</li>
+                </ul>
+
+                <div id="assignments" class="assignment">
+                  <svg width="350" height="350">
+                    <rect class="rectangle" width="150" height="150" x="25" y="30"/>
+
+                    <polygon class="triangle1" points="50,150  100,150  75,100"/>
+                    <polygon class="triangle2" points="100,150  150,150  125,100"/>
+                    <polygon class="triangle3" points="75,100  125,100  100,50"/>
+
+                    <circle class="circle1" cx="85" cy="240" r="50" />
+                    <circle class="circle2" cx="135" cy="240" r="50" />
+                    <circle class="circle3" cx="110" cy="290" r="50" />
+                  </svg>
+                  <svg width="350" height="350">
+                    <rect class="rectangle" width="150" height="150" x="25" y="30"/>
+
+                    <polygon class="triangle1" points="50,150  100,150  75,100"/>
+                    <polygon class="triangle2" points="100,150  150,150  125,100"/>
+                    <polygon class="triangle3" points="75,100  125,100  100,50"/>
+
+                    <circle class="circle1" cx="85" cy="240" r="50" />
+                    <circle class="circle2" cx="135" cy="240" r="50" />
+                    <circle class="circle3" cx="110" cy="290" r="50" />
+                  </svg>
+                </div>
+            </div>
+        </div>
+	<div style="text-align:center">
+            <a href="../drawingOnTheWeb" style="background-color:#ffffff" >Go Back</a>
+        </div>
+    </body>
+
+</html>

@@ -1,0 +1,95 @@
+@charset "utf-8";
+/* CSS Document */
+/* Jeremiah Crowley */
+
+    body {
+	background-position: top center;
+	margin: 40px;
+	background-image: url(background.jpg);
+	background-size: auto;
+    }
+
+    #title{
+        text-align: center;
+	color: #ffffff;
+    }
+	
+    #box {  
+        margin: 0px auto 0px auto;  
+        width:300px;  
+    }  
+	
+    #box h4 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	width: 1000px;
+	color: #ffffff;
+	letter-spacing: -1px;
+	margin-left: -20px;
+	margin-bottom: -10px;
+    }  
+
+    h5 {
+	color: #cccccc;
+	font-weight: 400;
+	font-size: 9px;
+	font-family: Verdana, Geneva, sans-serif;
+	position: relative;
+	top: -4px;
+	left: 90px;
+    }  
+	
+    .area {  
+        border:1px solid #494e52;  
+        background-color:#636d76;  
+        padding:8px;    		  
+    }  
+	
+    ul {  
+        margin:0px; padding:0px;  
+    }
+  
+    ul li {
+	list-style: none;
+	display: inline;
+	background-color: #ffffff;
+	color: #636d74;
+	padding: 4px 14px 4px 14px;
+	font-size: 9px;
+	font-family: Verdana, Geneva, sans-serif;
+	font-weight: 700;
+	border: 1px solid #cccccc;
+        border-bottom-color: ffffff;
+    }  
+	
+    ol {
+	list-style:none;  
+        display:inline; 
+    }
+	
+    .assignment {
+	background-color: #ffffff;
+	border: 1px solid #ffffff;
+	border: 1px solid #cccccc;
+	padding: 0px 30px 0px 30px;
+	text-align: left;
+    }
+  
+    .assignment ol li {  
+        border-bottom:1px solid #d6dde0;  
+        padding-top:15px;  
+        padding-bottom:15px;  
+        font-size:13px;  
+    }  
+    
+    .assignment ol li a{
+        text-decoration:none;
+    }
+
+    .assignment ol li a small {  
+        color:#cccccc;  
+        font-size:7px;    
+        font-family:Verdana, Arial, Helvetica, sans-serif;  
+        position:relative;  
+        left:2px;   
+    }  
