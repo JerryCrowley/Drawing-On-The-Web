@@ -1,11 +1,15 @@
 # Drawing on the Web
-### Assignment 2 - SVG
+## Assignment 2 - SVG
 
 Second Assignment for CSCI-UA.0380-002 - Drawing on the Web
 
-  - Created two SVG collages
-  - Placed into my existing portfolio template
-  - Uploaded to github (sufficient for assignment 4)
+### Criteria
+- At least three SVG layers/groups with unique IDs (2 points)
+- At least three vector graphics in the SVG element (3 points)
+- An active link applied to at least one of the SVG graphics (1 point)
+- CSS styles applied to SVG layers (2 points)
+- Dynamic pseudo-classes (hover and active) that change SVG graphic links (1 point)
+- Good HTML, CSS, and SVG markup (1 point)
 
 Below are the instructions for the assignment 
 
