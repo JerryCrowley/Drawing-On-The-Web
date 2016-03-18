@@ -14,6 +14,6 @@ Below are the instructions for the assignment
 
 > Begin with a web page that includes an original CSS3 transition or animation. You may work with a previous project of yours or develop a new one if you like. Create at least two custom buttons—in SVG format—to be used on the page. Use CSS to vary the appearance of the buttons for their hover and active states.
 
-Using functions and event listeners, apply JavaScript to the web page so that these buttons control the application of your transition or animation. Each of the buttons should trigger a unique change. This could be as simple as playing and stopping an animation or rotating an element. You may include additional buttons for separate functions but only two are required.
+> Using functions and event listeners, apply JavaScript to the web page so that these buttons control the application of your transition or animation. Each of the buttons should trigger a unique change. This could be as simple as playing and stopping an animation or rotating an element. You may include additional buttons for separate functions but only two are required.
 
-To keep things organized and for optimal functionality, your SVG should be coded inline in your HTML document while your CSS and JavaScript should be linked to as external files.
+> To keep things organized and for optimal functionality, your SVG should be coded inline in your HTML document while your CSS and JavaScript should be linked to as external files.
