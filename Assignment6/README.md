@@ -2,6 +2,7 @@
 ## Assignment 6 - HTML Canvas
 
 Sixth Assignment for CSCI-UA.0380-002 - Drawing on the Web
+[Link to Asignment](http://i6.cims.nyu.edu/~jcc608/drawingOnTheWeb/assignment6/)
 
 ### Criteria
   - Three canvas drawings coded into the template provided (4 points)
