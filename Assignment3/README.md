@@ -2,6 +2,7 @@
 ## Assignment 3 - CSS Animation
 
 Third Assignment for CSCI-UA.0380-002 - Drawing on the Web
+[Link to Asignment](http://i6.cims.nyu.edu/~jcc608/drawingOnTheWeb/assignment3/)
 
 ### Criteria
   - Animation content including graphics and/or text (1 point)
