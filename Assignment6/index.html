@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>HTML Canvas</title>
+		<link rel="stylesheet" href="assignments.css" />
+
+		<style>
+			body {
+	 			margin: 0;
+	 			padding: 0;
+			}
+
+			#container {
+				width: 1950px;
+				height: 100%;
+				margin: auto;
+			}
+			
+			#frames {
+				width: inherit;
+				height: 450px;
+				position: absolute;
+				top: 50%;
+				margin-top: -225px;
+				padding-left: 25px;
+				padding-right: 25px;
+			}
+
+			iframe {
+				float: left;
+				margin-left: 25px;
+				margin-right: 25px;
+				background-color: #e0e0e0;  /*feel free to change or remove this color */
+				border: 0;
+			}
+
+			#game{
+				background-color: rgb(110,190,200);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="title">
+			<h3>Jeremiah Crowley</h3>
+			<h4>Assignment 3: CSS Animation</h4>
+		</div>
+		<div id="container">
+			<div id="frames">
+ 				<iframe src="drawings/drawing-2.html" width="600" height="450"></iframe>
+ 				<iframe id='game' src="drawings/drawing-1.html" width="288" height="384"></iframe>
+				<iframe src="drawings/drawing-3.html" width="600" height="450"></iframe> 
+			</div>
+		</div>
+		<div style="text-align:center">
+			<a href="../" style="background-color:#ffffff" >Go Back</a>
+		</div>
+	</body>
+</html>
