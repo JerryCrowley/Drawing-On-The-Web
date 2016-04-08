@@ -2,6 +2,7 @@
 ## Assignment 2 - SVG
 
 Second Assignment for CSCI-UA.0380-002 - Drawing on the Web
+[Link to Asignment](http://i6.cims.nyu.edu/~jcc608/drawingOnTheWeb/assignment2/)
 
 ### Criteria
 - At least three SVG layers/groups with unique IDs (2 points)
