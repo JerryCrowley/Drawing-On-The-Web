@@ -7,6 +7,8 @@ var numOfEnemies = 5;
 var grid         = [];
 var emptyGrid    = [];
 
+var emptyTmp = [];
+
 var blocks;
 var enemies;
 
@@ -62,26 +64,28 @@ function enemy(x,y,type){
 		var right = (this.position.x)+GRIDSIZE;
 		var up    = (this.position.y)-GRIDSIZE;
 		var down  = (this.position.y)+GRIDSIZE;
-		//console.log("RIGHT: "+right+" DOWN: "+down);
 
-		//console.log('checking');
+		console.log('HERE:'+emptyTmp[(xpos,ypos)]);
 
-		//Check right
-		if(!grid[ypos][right/GRIDSIZE]){
-			direction = 0
-		}
-		//Check down
-		else if(!grid[((down)-(height/SPLITHEIGHT))/GRIDSIZE][xpos]){
-			direction = 90;
-		}
-		//Check left
-		else if(!grid[ypos][left/GRIDSIZE]){
-			direction = 180;
-		}
-		//Check up
-		else if(!grid[((up)-(height/SPLITHEIGHT))/GRIDSIZE][xpos]){
-			direction = 270;
-		}
+		// //Check right
+		// if(!grid[ypos][right/GRIDSIZE]){
+		// 	direction = 0
+		// }
+		// //Check down
+		// else if(!grid[((down)-(height/SPLITHEIGHT))/GRIDSIZE][xpos]){
+		// 	direction = 90;
+		// }
+		// //Check left
+		// else if(!grid[ypos][left/GRIDSIZE]){
+		// 	direction = 180;
+		// }
+		// //Check up
+		// else if(!grid[((up)-(height/SPLITHEIGHT))/GRIDSIZE][xpos]){
+		// 	direction = 270;
+		// }
+
+		//for(var i = 0; i < )
+
 		return direction;
 	}
 
@@ -106,6 +110,7 @@ function block(x,y,color){
 }
 
 function changeBlock(tmpblock,direction){
+	grid[ypos][xpos].remove();
 	if(direction === "horizontal"){
 		var tmp = block(tmpblock.position.x,tmpblock.position.y,color(300,340,40));
 		tmp.type = "horizontal";
@@ -114,6 +119,7 @@ function changeBlock(tmpblock,direction){
 		var tmp = block(tmpblock.position.x,tmpblock.position.y,color(230,100,40));
 		tmp.type = "vertical";
 	}
+	emptyTmp[(xpos,ypos)] = tmp;
 }
 
 function loadEnemies(){
@@ -147,8 +153,6 @@ function loadBlocks(){
 		ypos += GRIDSIZE; 
 	}
 
-	console.log(lines);
-
 	for(var k = 0; k < lines.length; k++){
 		for(var j = 0; j < lines[k].length; j++){
 			xpos = (lines[k][j][0])/GRIDSIZE;
@@ -163,7 +167,6 @@ function loadBlocks(){
 			}
 
 			if(grid[ypos][xpos]){
-				grid[ypos][xpos].remove();
 				changeBlock(grid[ypos][xpos],direction);
 			}
 
@@ -231,7 +234,7 @@ function checkIntersection(coordinates,tmp){
 			}
 		}
 	}
-	if(tmp.length === 0){
+	if(tmp.length == 0){
 		//console.log("NONE");
 		return true; 
 	}
