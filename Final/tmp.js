@@ -13,8 +13,9 @@ var enemies;
 function setup(){
 	createCanvas(600,900);
 
-	blocks  = new Group();
-	enemies = new Group();
+	blocks      = new Group();
+	enemies     = new Group();
+	emptyBlocks = new Group();
 }
 
 function draw(){
@@ -33,7 +34,6 @@ function draw(){
 	background(110, 190, 200);
 
 	drawSprites();
-
 }
 
 function digger(){
@@ -62,9 +62,9 @@ function enemy(x,y,type){
 		var right = (this.position.x)+GRIDSIZE;
 		var up    = (this.position.y)-GRIDSIZE;
 		var down  = (this.position.y)+GRIDSIZE;
-		console.log("RIGHT: "+right+" DOWN: "+down);
+		//console.log("RIGHT: "+right+" DOWN: "+down);
 
-		console.log('checking');
+		//console.log('checking');
 
 		//Check right
 		if(!grid[ypos][right/GRIDSIZE]){
@@ -100,13 +100,20 @@ function hit(enemy, hit){
 function block(x,y,color){
 	var tmp = createSprite(x,y,GRIDSIZE,GRIDSIZE);
 	tmp.shapeColor = color; 
+	tmp.type = "full";
 	//tmp.setCollider("circle", 0,0, 20);
 	return tmp;
 }
 
-function killBlock(x,y){
-	grid[x][y].remove();
-	grid[x][y] = null;
+function changeBlock(tmpblock,direction){
+	if(direction === "horizontal"){
+		var tmp = block(tmpblock.position.x,tmpblock.position.y,color(300,340,40));
+		tmp.type = "horizontal";
+	}
+	else if(direction === "vertical"){
+		var tmp = block(tmpblock.position.x,tmpblock.position.y,color(230,100,40));
+		tmp.type = "vertical";
+	}
 }
 
 function loadEnemies(){
@@ -140,12 +147,28 @@ function loadBlocks(){
 		ypos += GRIDSIZE; 
 	}
 
+	console.log(lines);
+
 	for(var k = 0; k < lines.length; k++){
-		xpos = (lines[k][0])/GRIDSIZE;
-		ypos = ((lines[k][1])-(height/SPLITHEIGHT))/GRIDSIZE;
-		if(grid[ypos][xpos])
-			grid[ypos][xpos].remove();
-		grid[ypos][xpos] = null;
+		for(var j = 0; j < lines[k].length; j++){
+			xpos = (lines[k][j][0])/GRIDSIZE;
+			ypos = ((lines[k][j][1])-(height/SPLITHEIGHT))/GRIDSIZE;
+
+			var direction;
+			if(lines[k][j][0] != lines[k][lines[k].length-1][0]){
+				direction = "horizontal";
+			}
+			else if(lines[k][j][1] != lines[k][lines[k].length-1][1]){
+				direction = "vertical";
+			}
+
+			if(grid[ypos][xpos]){
+				grid[ypos][xpos].remove();
+				changeBlock(grid[ypos][xpos],direction);
+			}
+
+			grid[ypos][xpos] = null;
+		}
 	}
 }
 
@@ -155,9 +178,7 @@ function randomLines(){
 	for(var i = 0; i < numOfEnemies; i++){
 		var tmp = createLine(coordinates);
 
-		for(var j = 0; j < tmp.length; j++){
-			coordinates.push(tmp[j]);
-		}
+		coordinates.push(tmp);
 	}
 
 	return coordinates;
@@ -202,14 +223,16 @@ function createLine(coordinates){
 
 function checkIntersection(coordinates,tmp){
 	for(var i = 0; i < coordinates.length; i++){
-		for(var j = 0; j < tmp.length; j++){
-			if((coordinates[i][0] === tmp[j][0]) && (coordinates[i][1] === tmp[j][1])){
-				return true;
+		for(var j = 0; j < coordinates[i].length; j++){
+			for(var k = 0; k < tmp.length; k++){
+				if((coordinates[i][j][0] == tmp[k][0]) && (coordinates[i][j][1] == tmp[k][1])){
+					return true;
+				}
 			}
 		}
 	}
 	if(tmp.length === 0){
-		console.log("NONE");
+		//console.log("NONE");
 		return true; 
 	}
 	return false;
