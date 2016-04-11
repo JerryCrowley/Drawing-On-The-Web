@@ -8,8 +8,18 @@ var SPLITHEIGHT = 3;
 var SPLITWIDTH  = 2;
 var DIGGERSPEED = 25;
 var ENEMYSPEED  = 1;
+var LENOFTRACK  = 2;
+var UPDIR       = 270;
+var DOWNDIR     = 90;
+var LEFTDIR     = 180;
+var RIGHTDIR    = 0;
 
-var numOfEnemies = 3;
+var LEFT  = 0;
+var RIGHT = 1;
+var UP    = 2;
+var DOWN  = 3; 
+
+var numOfEnemies = 5;
 var grid         = [];
 var emptyGrid    = [];
 
@@ -38,30 +48,39 @@ function draw(){
 		}
 	}
 
-	if(keyDown(LEFT_ARROW)){
-		digger.diggerDirection = 180;
-		flipDiggerDirection(digger);
-    	digger.position.x -= DIGGERSPEED;
-    }
-	if(keyDown(RIGHT_ARROW)){
-		digger.diggerDirection = 0;
-		flipDiggerDirection(digger);
-		digger.position.x += DIGGERSPEED;
-	}
-	if(keyDown(UP_ARROW)){
-		digger.diggerDirection = 90;
-		flipDiggerDirection(digger);
-		digger.position.y -= DIGGERSPEED;
-	}
-	if(keyDown(DOWN_ARROW)){		
-		digger.diggerDirection = 270;
-		flipDiggerDirection(digger);
-		digger.position.y += DIGGERSPEED;
+	for(var i = 0; i < enemies.length; i++){
+			enemies.get(i).checkLocation();
 	}
 
-	enemies.overlap(emptyBlocks,hitEmptyBlock);
+	if(keyDown(LEFT_ARROW)){
+		digger.diggerDirection = LEFTDIR;
+		flipDiggerDirection(digger);
+    	digger.position.x -= DIGGERSPEED;
+    	digger.prevDirection = LEFTDIR;
+    }
+	if(keyDown(RIGHT_ARROW)){
+		digger.diggerDirection = RIGHTDIR;
+		flipDiggerDirection(digger);
+		digger.position.x += DIGGERSPEED;
+		digger.prevDirection = RIGHTDIR;
+	}
+	if(keyDown(UP_ARROW)){
+		digger.diggerDirection = DOWNDIR;
+		flipDiggerDirection(digger);
+		digger.position.y -= DIGGERSPEED;
+		digger.prevDirection = DOWNDIR;
+	}
+	if(keyDown(DOWN_ARROW)){		
+		digger.diggerDirection = UPDIR;
+		flipDiggerDirection(digger);
+		digger.position.y += DIGGERSPEED;
+    	digger.prevDirection = UPDIR;
+	}
+
 	enemies.overlap(blocks,hitBlock);
 	enemies.overlap(enemies,hitEnemy);
+	enemies.overlap(emptyBlocks,hitEmptyBlock);
+	enemies.overlap(digger, diggerKilled);
 
 	digger.overlap(emptyBlocks,diggerHitBlock);
 	digger.overlap(blocks,diggerHit);
@@ -75,6 +94,7 @@ function digger(){
 	var tmp = createSprite(GRIDSIZE,(height/SPLITHEIGHT)-GRIDSIZE,GRIDSIZE/2,GRIDSIZE/2);
 	tmp.shapeColor = color(0,0,255);
 	tmp.diggerDirection = 0; 
+	tmp.diggerPrevDirection = 0;
 
 	return tmp;
 }
@@ -83,13 +103,60 @@ function enemy(x,y,type){
 	var tmp = createSprite(x,y,GRIDSIZE/2,GRIDSIZE/2);
 	tmp.shapeColor = type;
 	tmp.type = "ex";
-	tmp.prevDirection = 0; 
+	tmp.prevDirection = RIGHTDIR; 
+	tmp.moves = [];
+	tmp.intersections = [];
 
 	enemies.add(tmp);
 
 	tmp.move = function() {
 		var direction = this.checkDirection();
+		if(this.moves.length > LENOFTRACK){
+			this.moves.pop();
+		}
+		this.moves.push(direction);
 		this.setSpeed(ENEMYSPEED,direction);
+		this.prevDirection = direction;
+	}
+
+	tmp.checkLocation = function(){		
+		if(this.position.y == ((height/SPLITHEIGHT)-GRIDSIZE)){
+			if(this.position.x < (width/2)){
+				direction = LEFTDIR;
+			}
+			else{
+				direction = RIGHTDIR;
+			}
+			this.setSpeed(ENEMYSPEED,direction);
+			this.prevDirection = direction;
+		}
+
+		if((this.position.y == ((height/SPLITHEIGHT)-GRIDSIZE)) && ((this.position.x == 0) || (this.position.x == width))){
+			console.log('GAME OVER');
+		}else if((this.position.x == RIGHTDIR) || (this.position.x == width) || (this.position.y == height)){
+			flipDirection(this);
+		}
+
+		var currentBlock = grid[[this.position.x,this.position.y]];
+		if((currentBlock) && (currentBlock.type === "empty")){
+			switch(this.prevDirection) {
+			    case RIGHTDIR:
+			    case LEFTDIR:{
+				    	direction = this.changeDirection('horizontal',currentBlock);
+						this.setSpeed(ENEMYSPEED,direction);
+						this.prevDirection = direction;
+			    	}	
+			        break;
+			    case DOWNDIR:
+			    case UPDIR:{
+				    	direction = this.changeDirection('vertical',currentBlock);
+						this.setSpeed(ENEMYSPEED,direction);
+						this.prevDirection = direction;
+			    	}	
+			        break;
+			    default:
+			}
+		}
 	}
 
 	tmp.checkDirection = function(){
@@ -104,68 +171,185 @@ function enemy(x,y,type){
 		var down  = ypos+GRIDSIZE;
 
 		var currentBlock = grid[[xpos,ypos]];
+		if(currentBlock){
+			if(currentBlock.type === "horizontal"){
+				if(grid[[right,ypos]] && grid[[left,ypos]]){
+					//Check right
+					if((grid[[right,ypos]].type === "horizontal") || (grid[[right,ypos]].type === "empty")){
+						direction = RIGHTDIR
+					}
+					//Check left
+					else if((grid[[left,ypos]].type === "horizontal") || (grid[[left,ypos]].type === "empty")){
+						direction = LEFTDIR;
+					}
+					
+					if((grid[[right,ypos]].type === "vertical") || (grid[[left,ypos]].type === "vertical")){
+						if((grid[[right,ypos]].type === "horizontal") && (this.velocity.x > RIGHTDIR)){
+							direction = RIGHTDIR;
+						}else{
+							flipDirection(this);
+						}
+					}
+				}
+			}
+			else if(currentBlock.type === "vertical"){
+				if(grid[[xpos,up]] && grid[[xpos,down]]){
+					//Check down
+					if((grid[[xpos,down]].type === "vertical") || (grid[[xpos,down]].type === "empty")){
+						direction = DOWNDIR;
+					}
+					//Check up
+					else if((grid[[xpos,up]].type === "vertical") || (grid[[xpos,up]].type === "empty")){
+						direction = UPDIR;
+					}
+					
+					if((grid[[xpos,up]].type  === "horizontal") || (grid[[xpos,down]].type  === "horizontal")){
+						if((grid[[xpos,down]].type === "vertical") && (this.velocity.y > RIGHTDIR)){
+							direction = DOWNDIR;
+						}else{
+							flipDirection(this);
+						}
+					}
+				}
+			}
+		}
+		return direction;
+	}
+
+	tmp.changeDirection = function(direction,currentBlock){
+		var xpos  = currentBlock.position.x;
+		var ypos  =	currentBlock.position.y;
+
+		var leftBlock  = grid[[xpos-GRIDSIZE,ypos]];
+		var rightBlock = grid[[xpos+GRIDSIZE,ypos]];
+		var upBlock    = grid[[xpos,ypos-GRIDSIZE]];
+		var downBlock  = grid[[xpos,ypos+GRIDSIZE]];
+
+		if(!this.intersections[[xpos,ypos]]){
+			tmp = [];
+			if(leftBlock.type != "full"){
+				if(this.prevDirection == LEFTDIR)
+					var cond = true
+				else
+					var cond = false
+				tmp[LEFT] = [leftBlock,cond];
+			}
+			if(rightBlock.type != "full"){
+				if(this.prevDirection == RIGHTDIR)
+					var cond = true
+				else
+					var cond = false
+				tmp[RIGHT] = [rightBlock,cond];
+			}
+			if(upBlock.type != "full"){
+				if(this.prevDirection == UPDIR)
+					var cond = true
+				else
+					var cond = false
+				tmp[UP] = [upBlock,cond];
+			}
+			if(downBlock.type != "full"){
+				if(this.prevDirection == DOWNDIR)
+					var cond = true
+				else
+					var cond = false
+				tmp[DOWN] = [downBlock,cond];
+			}
+			this.intersections[[xpos,ypos]] = tmp;
+		 }else{
+		 	var count = 0;
+		 	var tmp   = [];
+
+		 	if(this.intersections[[xpos,ypos]][LEFT]){
+		 		count += 1;
+		 		if(this.intersections[[xpos,ypos]][LEFT][1] == true){
+		 			tmp.push(LEFT);
+		 		}
+		 	}
+		 	if(this.intersections[[xpos,ypos]][RIGHT]){
+		 		count += 1;
+		 		if(this.intersections[[xpos,ypos]][RIGHT][1] == true){
+		 			tmp.push(RIGHT);		 		
+		 		}
+		 	}
+		 	if(this.intersections[[xpos,ypos]][UP]){
+		 		count += 1;
+		 		if(this.intersections[[xpos,ypos]][UP][1] == true){
+		 			tmp.push(UP);
+		 		}
+		 	}
+		 	if(this.intersections[[xpos,ypos]][DOWN]){
+		 		count += 1;
+		 		if(this.intersections[[xpos,ypos]][DOWN][1] == true){
+		 			tmp.push(DOWN);
+		 		}
+		 	}
+		 	if(count == tmp.length){
+		 		for(var i = 0; i < count; i++){
+		 			this.intersections[[xpos,ypos]][tmp.pop()][1] = false;
+		 		}
+		 	}
+		}
 		
-		if(currentBlock.type === "horizontal"){
-			//Check right
-			if((grid[[right,ypos]].type === "horizontal") || (grid[[right,ypos]].type === "empty")){
-				direction = 0
+		var tmp = this.intersections[[xpos,ypos]];
+		if(direction === "horizontal"){
+			if(tmp[UP] && (tmp[UP][1] == false)){
+				direction = UPDIR;
+				tmp[UP][1] = true;
+			}else if(tmp[DOWN] && (tmp[DOWN][1] == false)){
+				direction = DOWNDIR;
+				tmp[DOWN][1] = true;
+			}else if(tmp[RIGHT] && (tmp[RIGHT][1] == false)){
+				direction = RIGHTDIR;
+				tmp[RIGHT][1] = true;
+			}else if(tmp[LEFT] && (tmp[LEFT][1] == false)){
+				direction = LEFTDIR;
+				tmp[LEFT][1] = true;
+			}else{
+				direction = flipDirection(this);
 			}
-			//Check left
-			else if((grid[[left,ypos]].type === "horizontal") || (grid[[left,ypos]].type === "empty")){
-				direction = 180;
-			}
-			
-			if((grid[[right,ypos]].type === "vertical") || (grid[[left,ypos]].type === "vertical")){
-				if((grid[[right,ypos]].type === "horizontal") && (this.velocity.x > 0)){
-					direction = 0;
-				}else{
-					flipDirection(this);
-				}
-			}
-		}
-		else if(currentBlock.type === "vertical"){
-			//Check down
-			if((grid[[xpos,down]].type === "vertical") || (grid[[xpos,down]].type === "empty")){
-				direction = 90;
-			}
-			//Check up
-			else if((grid[[xpos,up]].type === "vertical") || (grid[[xpos,up]].type === "empty")){
-				direction = 270;
-			}
-			
-			if((grid[[xpos,up]].type  === "horizontal") || (grid[[xpos,down]].type  === "horizontal")){
-				if((grid[[xpos,down]].type === "vertical") && (this.velocity.y > 0)){
-					direction = 90;
-				}else{
-					flipDirection(this);
-				}
+		}else if(direction === "vertical"){
+			if(tmp[RIGHT] && (tmp[RIGHT][1] == false)){
+				direction = RIGHTDIR;
+				tmp[RIGHT][1] = true;
+			}else if(tmp[LEFT] && (tmp[LEFT][1] == false)){
+				direction = LEFTDIR;
+				tmp[LEFT][1] = true;
+			}else if(tmp[UP] && (tmp[UP][1] == false)){
+				direction = UPDIR;
+				tmp[UP][1] = true;
+			}else if(tmp[DOWN] && (tmp[DOWN][1] == false)){
+				direction = DOWNDIR;
+				tmp[DOWN][1] = true;
+			}else{
+				direction = flipDirection(this);
 			}
 		}
-		else if(currentBlock.type === "empty"){
-			if((this.prevDirection == 0) || (this.prevDirection == 180)){
-				//Check down
-				if((grid[[xpos,down]].type === "vertical") || (grid[[xpos,down]].type === "empty")){
-					direction = 90;
-				}
-				//Check up
-				else if((grid[[xpos,up]].type === "vertical") || (grid[[xpos,up]].type === "empty")){
-					direction = 270;
-				}
+		return direction;
+	}
+
+	tmp.updateMoves = function(){
+		if((this.velocity.x != -ENEMYSPEED) || (this.velocity.x != ENEMYSPEED)){
+			if(this.moves.length > LENOFTRACK){
+				this.moves.pop();
 			}
-			else if((this.prevDirection == 90) || (this.prevDirection == 270)){
-				//Check right
-				if((grid[[right,ypos]].type === "horizontal") || (grid[[right,ypos]].type === "empty")){
-					direction = 0
-				}
-				//Check left
-				else if((grid[[left,ypos]].type === "horizontal") || (grid[[left,ypos]].type === "empty")){
-					direction = 180;
-				}
+			if(this.velocity.x == 1){
+				this.moves.push(RIGHTDIR);
+			}else if(this.velocity.x == -1){
+				this.moves.push(LEFTDIR);
 			}
 		}
 
-		this.prevDirection = direction;
-		return direction;
+		if((this.velocity.y != -ENEMYSPEED) || (this.velocity.y != ENEMYSPEED)){
+			if(this.moves.length > LENOFTRACK){
+				this.moves.pop();
+			}
+			if(this.velocity.y == 1){
+				this.moves.push(DOWNDIR);
+			}else if(this.velocity.y == -1){
+				this.moves.push(UPDIR);
+			}
+		}
 	}
 
 	return tmp;
@@ -214,46 +398,61 @@ function loadBlocks(){
 
 function hitBlock(enemy){
 	flipDirection(enemy);
+	enemy.updateMoves();
 }
 
 function hitEnemy(enemy){
 	flipDirection(enemy);
+	enemy.updateMoves();
 }
 
-function hitEmptyBlock(enemy){
-	enemy.checkDirection();
+function hitEmptyBlock(enemy,blk){
+	if(blk.type != "empty"){
+		//enemy.checkDirection(enemy.prevDirection,blk);
+		enemy.checkDirection();
+		enemy.updateMoves();
+	}
 }
 
 function diggerHitBlock(digger,blk){
-	var tmp = blk;
+	if((blk.type == "vertical") && (keyDown(LEFT_ARROW) || keyDown(RIGHT_ARROW))){
+		changeBlock(blk,"empty");
+	}
+	else if((blk.type == "horizontal") && (keyDown(UP_ARROW) || keyDown(DOWN_ARROW))){
+		changeBlock(blk,"empty");
+	}
 
-	if(block && (keyDown(LEFT_ARROW) || keyDown(RIGHT_ARROW) || keyDown(UP_ARROW) || keyDown(DOWN_ARROW))){
-		changeBlock(tmp,"empty");
+	if(keyIsPressed){
+		if(((keyCode == UP_ARROW) || (keyCode == DOWN_ARROW)) && (blk.type === 'horizontal')){
+			changeBlock(blk,"empty");
+		}else if(((keyCode == LEFT_ARROW) || (keyCode == RIGHT_ARROW)) && (blk.type === 'vertical')){
+			changeBlock(blk,"empty");
+		}
 	}
 }
 
 function diggerHit(dig,blk){
 	var tmp = blk;
 	switch(digger.diggerDirection) {
-	    case 0:{
+	    case RIGHTDIR:{
 		    	if(tmp.type === "full"){
 		    		changeBlock(tmp,"horizontal");
 		    	}
 	    	}	
 	        break;
-	    case 90:{
+	    case DOWNDIR:{
 		    	if(tmp.type === "full"){
 		    		changeBlock(tmp,"vertical");
 		    	}
 	    	}	
 	        break;
-	    case 180:{
+	    case LEFTDIR:{
 		    	if(tmp.type === "full"){
 		    		changeBlock(tmp,"horizontal");
 		    	}
 	    	}	
 	        break;
-	    case 270:{
+	    case UPDIR:{
 		    	if(tmp.type === "full"){
 		    		changeBlock(tmp,"vertical");
 		    	}
@@ -263,36 +462,55 @@ function diggerHit(dig,blk){
 	}
 }
 
+function diggerKilled(enemy){
+	enemy.remove();
+	console.log('DIGGER KILLED - PLAY DEATH SEQUENCE');
+}
+
 function flipDirection(enemy){
+	var direction;
 	if(enemy.velocity.x != 0){
-		if(enemy.velocity.x > 0)
+		if(enemy.velocity.x > 0){
+			enemy.prevDirection = RIGHTDIR;
+			direction = LEFTDIR;
 			enemy.shapeColor = color(200,60,300);
-		else
+		}
+		else{
+			enemy.prevDirection = LEFTDIR;
+			direction = RIGHTDIR;
 			enemy.shapeColor = color(10,10,10);
+		}
 		enemy.velocity.x *= -1;
 	}
 
 	if(enemy.velocity.y != 0){
-		if(enemy.velocity.y > 0)
+		if(enemy.velocity.y > 0){
+			enemy.prevDirection = DOWNDIR;
+			direction = UPDIR;
 			enemy.shapeColor = color(100,110,120);
-		else
+		}
+		else{
+			enemy.prevDirection = UPDIR;
+			direction = DOWNDIR;
 			enemy.shapeColor = color(10,10,10);
+		}
 		enemy.velocity.y *= -1;
 	}
+	return direction;
 }
 
 function flipDiggerDirection(digger){
 	switch(digger.diggerDirection) {
-	    case 0:
+	    case RIGHTDIR:
 	        digger.shapeColor = color(0,0,255);
 	        break;
-	    case 90:
+	    case DOWNDIR:
 	        digger.shapeColor = color(0,255,0);
 	        break;
-	    case 180:
+	    case LEFTDIR:
 	        digger.shapeColor = color(255,0,0);
 	        break;
-	    case 270:
+	    case UPDIR:
 	        digger.shapeColor = color(0,0,0);
 	        break;
 	    default:
@@ -320,6 +538,48 @@ function changeBlock(tmpblock,direction){
 	blocks.remove(tmpblock);
 	emptyBlocks.add(tmpblock);
 }
+
+// function changeDirection(currentBlock, currentEnemy){
+// 	var direction; 
+
+// 	var xpos  = Math.round((currentBlock.position.x) / GRIDSIZE) * GRIDSIZE;
+// 	var ypos  =	Math.round((currentBlock.position.y) / GRIDSIZE) * GRIDSIZE;
+
+// 	var left  = xpos-GRIDSIZE;
+// 	var right = xpos+GRIDSIZE;
+// 	var up    = ypos-GRIDSIZE;
+// 	var down  = ypos+GRIDSIZE;
+
+// 	console.log("Type: "+currentBlock.type+" Prev: "+currentEnemy.prevDirection);
+// 	console.log("Curr: "+currentBlock.position.x+":"+currentBlock.position.y+" Next: "+xpos+":"+ypos);
+
+// 	if(currentBlock.type === "empty"){
+// 		console.log(currentEnemy.position);
+// 		if((currentEnemy.prevDirection == RIGHTDIR) || (currentEnemy.prevDirection == LEFTDIR)){
+// 			//Check down
+// 			if((grid[[xpos,down]].type === "vertical") || (grid[[xpos,down]].type === "empty")){
+// 				currentEnemy.position.x += GRIDSIZE/2;
+// 				direction = DOWNDIR;
+// 			}
+// 			//Check up
+// 			else if((grid[[xpos,up]].type === "vertical") || (grid[[xpos,up]].type === "empty")){
+// 				currentEnemy.position.x += GRIDSIZE/2;
+// 				direction = UPDIR;
+// 			}
+// 		}
+// 		else if((currentEnemy.prevDirection == DOWNDIR) || (currentEnemy.prevDirection == UPDIR)){
+// 			//Check right
+// 			if((grid[[right,ypos]].type === "horizontal") || (grid[[right,ypos]].type === "empty")){
+// 				direction = RIGHTDIR;
+// 			}
+// 			//Check left
+// 			else if((grid[[left,ypos]].type === "horizontal") || (grid[[left,ypos]].type === "empty")){
+// 				direction = LEFTDIR;
+// 			}
+// 		}
+// 	}
+// 	return direction;
+// }
 
 function randomLines(){
 	var coordinates = [];
