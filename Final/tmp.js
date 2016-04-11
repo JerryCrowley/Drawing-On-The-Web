@@ -19,6 +19,7 @@ var RIGHT = 1;
 var UP    = 2;
 var DOWN  = 3; 
 
+var hitOnce      = 0;
 var numOfEnemies = 5;
 var grid         = [];
 var emptyGrid    = [];
@@ -32,6 +33,7 @@ function setup(){
 	createCanvas(600,900);
 
 	blocks      = new Group();
+	bullets     = new Group();
 	enemies     = new Group();
 	emptyBlocks = new Group();
 }
@@ -50,6 +52,13 @@ function draw(){
 
 	for(var i = 0; i < enemies.length; i++){
 			enemies.get(i).checkLocation();
+			if(enemies.get(i).pausedState > 0){
+				console.log(enemies.get(i).pausedState);
+				enemies.get(i).pausedState-=2;
+				if(enemies.get(i).pausedState == 0){
+					deflateEnemy(enemies.get(i));
+				}
+			}
 	}
 
 	if(keyDown(LEFT_ARROW)){
@@ -76,6 +85,32 @@ function draw(){
 		digger.position.y += DIGGERSPEED;
     	digger.prevDirection = UPDIR;
 	}
+	if(keyWentDown('X')){
+		hitOnce = 0;
+		switch(digger.diggerDirection){
+			case RIGHTDIR:{
+				var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+			}break;
+			case LEFTDIR:{
+				var bullet = createSprite(digger.position.x-(GRIDSIZE/2), digger.position.y,-GRIDSIZE,5);
+			}break;
+			case UPDIR:{
+				var bullet = createSprite(digger.position.x, digger.position.y+(GRIDSIZE/2),-GRIDSIZE,5);
+			}break;
+			case DOWNDIR:{
+				var bullet = createSprite(digger.position.x, digger.position.y-(GRIDSIZE/2),GRIDSIZE,5);
+			}break;
+			default:{
+				var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+			}
+		}
+		
+		bullet.depth = enemies.get(0).depth-1;
+		bullet.rotation = digger.diggerDirection;
+		bullet.setCollider("rectangle", 0,0, GRIDSIZE,5);
+   		bullet.life = 10;
+   		bullets.add(bullet);
+	}
 
 	enemies.overlap(blocks,hitBlock);
 	enemies.overlap(enemies,hitEnemy);
@@ -85,6 +120,8 @@ function draw(){
 	digger.overlap(emptyBlocks,diggerHitBlock);
 	digger.overlap(blocks,diggerHit);
 
+	bullets.overlap(enemies,diggerHitEnemy);
+
 	background(110, 190, 200);
 
 	drawSprites();
@@ -93,8 +130,8 @@ function draw(){
 function digger(){
 	var tmp = createSprite(GRIDSIZE,(height/SPLITHEIGHT)-GRIDSIZE,GRIDSIZE/2,GRIDSIZE/2);
 	tmp.shapeColor = color(0,0,255);
-	tmp.diggerDirection = 0; 
-	tmp.diggerPrevDirection = 0;
+	tmp.diggerDirection; 
+	tmp.diggerPrevDirection;
 
 	return tmp;
 }
@@ -106,17 +143,21 @@ function enemy(x,y,type){
 	tmp.prevDirection = RIGHTDIR; 
 	tmp.moves = [];
 	tmp.intersections = [];
+	tmp.blowupState = 0.0;
+	tmp.pausedState = 0;
 
 	enemies.add(tmp);
 
 	tmp.move = function() {
-		var direction = this.checkDirection();
-		if(this.moves.length > LENOFTRACK){
-			this.moves.pop();
+		if(this.blowupState == 0){
+			var direction = this.checkDirection();
+			if(this.moves.length > LENOFTRACK){
+				this.moves.pop();
+			}
+			this.moves.push(direction);
+			this.setSpeed(ENEMYSPEED,direction);
+			this.prevDirection = direction;
 		}
-		this.moves.push(direction);
-		this.setSpeed(ENEMYSPEED,direction);
-		this.prevDirection = direction;
 	}
 
 	tmp.checkLocation = function(){		
@@ -145,15 +186,13 @@ function enemy(x,y,type){
 				    	direction = this.changeDirection('horizontal',currentBlock);
 						this.setSpeed(ENEMYSPEED,direction);
 						this.prevDirection = direction;
-			    	}	
-			        break;
+			    	}break;
 			    case DOWNDIR:
 			    case UPDIR:{
 				    	direction = this.changeDirection('vertical',currentBlock);
 						this.setSpeed(ENEMYSPEED,direction);
 						this.prevDirection = direction;
-			    	}	
-			        break;
+			    	}break;
 			    default:
 			}
 		}
@@ -293,32 +332,32 @@ function enemy(x,y,type){
 		
 		var tmp = this.intersections[[xpos,ypos]];
 		if(direction === "horizontal"){
-			if(tmp[UP] && (tmp[UP][1] == false)){
+			if(tmp[UP] && (tmp[UP][1] === false)){
 				direction = UPDIR;
 				tmp[UP][1] = true;
-			}else if(tmp[DOWN] && (tmp[DOWN][1] == false)){
+			}else if(tmp[DOWN] && (tmp[DOWN][1] === false)){
 				direction = DOWNDIR;
 				tmp[DOWN][1] = true;
-			}else if(tmp[RIGHT] && (tmp[RIGHT][1] == false)){
+			}else if(tmp[RIGHT] && (tmp[RIGHT][1] === false)){
 				direction = RIGHTDIR;
 				tmp[RIGHT][1] = true;
-			}else if(tmp[LEFT] && (tmp[LEFT][1] == false)){
+			}else if(tmp[LEFT] && (tmp[LEFT][1] === false)){
 				direction = LEFTDIR;
 				tmp[LEFT][1] = true;
 			}else{
 				direction = flipDirection(this);
 			}
 		}else if(direction === "vertical"){
-			if(tmp[RIGHT] && (tmp[RIGHT][1] == false)){
+			if(tmp[RIGHT] && (tmp[RIGHT][1] === false)){
 				direction = RIGHTDIR;
 				tmp[RIGHT][1] = true;
-			}else if(tmp[LEFT] && (tmp[LEFT][1] == false)){
+			}else if(tmp[LEFT] && (tmp[LEFT][1] === false)){
 				direction = LEFTDIR;
 				tmp[LEFT][1] = true;
-			}else if(tmp[UP] && (tmp[UP][1] == false)){
+			}else if(tmp[UP] && (tmp[UP][1] === false)){
 				direction = UPDIR;
 				tmp[UP][1] = true;
-			}else if(tmp[DOWN] && (tmp[DOWN][1] == false)){
+			}else if(tmp[DOWN] && (tmp[DOWN][1] === false)){
 				direction = DOWNDIR;
 				tmp[DOWN][1] = true;
 			}else{
@@ -462,9 +501,56 @@ function diggerHit(dig,blk){
 	}
 }
 
+function diggerHitEnemy(bullet,enemy){
+	if(hitOnce == 0){
+		enemy.setSpeed(0,enemy.checkDirection());
+		enemy.pausedState = 30;
+
+		if(keyWentDown('X')){	
+			//bullet.life += 10; 
+			switch(enemy.blowupState){
+				case 0:{
+					enemy.scale = 1.0;
+					enemy.blowupState = 1; 
+				}break;
+				case 1:{
+					enemy.scale = 1.2;
+					enemy.blowupState = 2;
+				}break;
+				case 2:{
+					enemy.scale = 1.4;
+					enemy.blowupState = 3;
+				}break;
+				case 3:{
+					enemy.scale = 1.6;
+					enemy.blowupState = 4;
+				}break;
+				case 4:{
+					enemyKilled(enemy);
+				}
+				default:
+					enemy.scale = 0;
+			}
+		}
+	}
+	hitOnce = 1;
+}
+
+function deflateEnemy(enemy){
+	for(var i = enemy.blowupState; i > 1; i--){
+		enemy.scale -= .2;
+	}
+	enemy.setSpeed(ENEMYSPEED,enemy.checkDirection());
+}
+
 function diggerKilled(enemy){
 	enemy.remove();
 	console.log('DIGGER KILLED - PLAY DEATH SEQUENCE');
+}
+
+function enemyKilled(enemy){
+	enemy.remove(); //REMOVE ENEMY ANIMATION
+	console.log('ENEMY KILED');
 }
 
 function flipDirection(enemy){
