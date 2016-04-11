@@ -6,7 +6,7 @@ var LOADLEVEL   = false;
 var GRIDSIZE    = 25;
 var SPLITHEIGHT = 3;
 var SPLITWIDTH  = 2;
-var DIGGERSPEED = 25;
+var DIGGERSPEED = 5;
 var ENEMYSPEED  = 1;
 var LENOFTRACK  = 2;
 var UPDIR       = 270;
@@ -455,16 +455,28 @@ function hitEmptyBlock(enemy,blk){
 
 function diggerHitBlock(digger,blk){
 	if((blk.type == "vertical") && (keyDown(LEFT_ARROW) || keyDown(RIGHT_ARROW))){
+		if(blk.position.x != digger.position.x){
+	    	digger.position.x = blk.position.x;
+	    }
 		changeBlock(blk,"empty");
 	}
 	else if((blk.type == "horizontal") && (keyDown(UP_ARROW) || keyDown(DOWN_ARROW))){
+		if(blk.position.y != digger.position.y){
+	    	digger.position.y = blk.position.y;
+		}
 		changeBlock(blk,"empty");
 	}
 
 	if(keyIsPressed){
 		if(((keyCode == UP_ARROW) || (keyCode == DOWN_ARROW)) && (blk.type === 'horizontal')){
+			if(blk.position.y != digger.position.y){
+		    	digger.position.y = blk.position.y;
+		    }
 			changeBlock(blk,"empty");
 		}else if(((keyCode == LEFT_ARROW) || (keyCode == RIGHT_ARROW)) && (blk.type === 'vertical')){
+			if(blk.position.x != digger.position.x){
+		    	digger.position.x = blk.position.x;
+		    }
 			changeBlock(blk,"empty");
 		}
 	}
@@ -475,24 +487,36 @@ function diggerHit(dig,blk){
 	switch(digger.diggerDirection) {
 	    case RIGHTDIR:{
 		    	if(tmp.type === "full"){
+		    		if(blk.position.y != dig.position.y){
+		    			dig.position.y = blk.position.y;
+		    		}
 		    		changeBlock(tmp,"horizontal");
 		    	}
 	    	}	
 	        break;
 	    case DOWNDIR:{
 		    	if(tmp.type === "full"){
+		    		if(blk.position.x != dig.position.x){
+		    			dig.position.x = blk.position.x;
+		    		}
 		    		changeBlock(tmp,"vertical");
 		    	}
 	    	}	
 	        break;
 	    case LEFTDIR:{
 		    	if(tmp.type === "full"){
+		    		if(blk.position.y != dig.position.y){
+		    			dig.position.y = blk.position.y;
+		    		}
 		    		changeBlock(tmp,"horizontal");
 		    	}
 	    	}	
 	        break;
 	    case UPDIR:{
 		    	if(tmp.type === "full"){
+		    		if(blk.position.x != dig.position.x){
+		    			dig.position.x = blk.position.x;
+		    		}
 		    		changeBlock(tmp,"vertical");
 		    	}
 	    	}	
@@ -624,48 +648,6 @@ function changeBlock(tmpblock,direction){
 	blocks.remove(tmpblock);
 	emptyBlocks.add(tmpblock);
 }
-
-// function changeDirection(currentBlock, currentEnemy){
-// 	var direction; 
-
-// 	var xpos  = Math.round((currentBlock.position.x) / GRIDSIZE) * GRIDSIZE;
-// 	var ypos  =	Math.round((currentBlock.position.y) / GRIDSIZE) * GRIDSIZE;
-
-// 	var left  = xpos-GRIDSIZE;
-// 	var right = xpos+GRIDSIZE;
-// 	var up    = ypos-GRIDSIZE;
-// 	var down  = ypos+GRIDSIZE;
-
-// 	console.log("Type: "+currentBlock.type+" Prev: "+currentEnemy.prevDirection);
-// 	console.log("Curr: "+currentBlock.position.x+":"+currentBlock.position.y+" Next: "+xpos+":"+ypos);
-
-// 	if(currentBlock.type === "empty"){
-// 		console.log(currentEnemy.position);
-// 		if((currentEnemy.prevDirection == RIGHTDIR) || (currentEnemy.prevDirection == LEFTDIR)){
-// 			//Check down
-// 			if((grid[[xpos,down]].type === "vertical") || (grid[[xpos,down]].type === "empty")){
-// 				currentEnemy.position.x += GRIDSIZE/2;
-// 				direction = DOWNDIR;
-// 			}
-// 			//Check up
-// 			else if((grid[[xpos,up]].type === "vertical") || (grid[[xpos,up]].type === "empty")){
-// 				currentEnemy.position.x += GRIDSIZE/2;
-// 				direction = UPDIR;
-// 			}
-// 		}
-// 		else if((currentEnemy.prevDirection == DOWNDIR) || (currentEnemy.prevDirection == UPDIR)){
-// 			//Check right
-// 			if((grid[[right,ypos]].type === "horizontal") || (grid[[right,ypos]].type === "empty")){
-// 				direction = RIGHTDIR;
-// 			}
-// 			//Check left
-// 			else if((grid[[left,ypos]].type === "horizontal") || (grid[[left,ypos]].type === "empty")){
-// 				direction = LEFTDIR;
-// 			}
-// 		}
-// 	}
-// 	return direction;
-// }
 
 function randomLines(){
 	var coordinates = [];
