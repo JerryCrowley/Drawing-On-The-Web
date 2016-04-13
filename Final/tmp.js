@@ -2,11 +2,13 @@
 //Drawing on the Web 
 //Dig Dug
 
-var LOADLEVEL   = false;
-var GRIDSIZE    = 25;
+var LOADLEVEL;
+var GAMEOVER;
+var STARTGAME;
+var GRIDSIZE    = 50;
 var SPLITHEIGHT = 3;
 var SPLITWIDTH  = 2;
-var DIGGERSPEED = 5;
+var DIGGERSPEED = 2;
 var ENEMYSPEED  = 1;
 var LENOFTRACK  = 2;
 var UPDIR       = 270;
@@ -29,6 +31,28 @@ var blocks;
 var enemies;
 var emptyBlocks;
 
+var diggerRight1; 
+var diggerRight2;
+var diggerLeft1;
+var diggerLeft2;
+var diggerUp1;
+var diggerUp2;
+var diggerDown1;
+var diggerDown2;
+
+function preload(){
+	//LOAD IMAGES HERE
+	diggerRight1 = loadImage("digDug_05.png"); 
+	diggerRight2 = loadImage("digDug_07.png");
+	diggerLeft1  = loadImage("digDug_21.png");
+	diggerLeft2  = loadImage("digDug_23.png");
+	diggerUp1	 = loadImage("digDug_88.png");
+	diggerUp2    = loadImage("digDug_89.png");
+	diggerDown1  = loadImage("digDug_46.png");
+	diggerDown2  = loadImage("digDug_48.png"); 
+
+}
+
 function setup(){
 	createCanvas(600,900);
 
@@ -36,102 +60,150 @@ function setup(){
 	bullets     = new Group();
 	enemies     = new Group();
 	emptyBlocks = new Group();
+
+	LOADLEVEL   = false;
+	GAMEOVER    = false;
+	STARTGAME   = false;
 }
 
 function draw(){
-	if(LOADLEVEL == false){
-		loadBlocks();
-		loadEnemies();
-		loadDigger();
-		LOADLEVEL = true;
+	if(STARTGAME == false){
+		showStartGame();
+	}else{
+		if(GAMEOVER == false){
+			if(LOADLEVEL == false){
+				updateSprites(true);
+				loadBlocks();
+				loadEnemies();
+				loadDigger();
+				LOADLEVEL = true;
 
-		for(var i = 0; i < enemies.length; i++){
-			enemies.get(i).move();
-		}
-	}
-
-	for(var i = 0; i < enemies.length; i++){
-			enemies.get(i).checkLocation();
-			if(enemies.get(i).pausedState > 0){
-				console.log(enemies.get(i).pausedState);
-				enemies.get(i).pausedState-=2;
-				if(enemies.get(i).pausedState == 0){
-					deflateEnemy(enemies.get(i));
+				for(var i = 0; i < enemies.length; i++){
+					enemies.get(i).move();
 				}
 			}
-	}
 
-	if(keyDown(LEFT_ARROW)){
-		digger.diggerDirection = LEFTDIR;
-		flipDiggerDirection(digger);
-    	digger.position.x -= DIGGERSPEED;
-    	digger.prevDirection = LEFTDIR;
-    }
-	if(keyDown(RIGHT_ARROW)){
-		digger.diggerDirection = RIGHTDIR;
-		flipDiggerDirection(digger);
-		digger.position.x += DIGGERSPEED;
-		digger.prevDirection = RIGHTDIR;
-	}
-	if(keyDown(UP_ARROW)){
-		digger.diggerDirection = DOWNDIR;
-		flipDiggerDirection(digger);
-		digger.position.y -= DIGGERSPEED;
-		digger.prevDirection = DOWNDIR;
-	}
-	if(keyDown(DOWN_ARROW)){		
-		digger.diggerDirection = UPDIR;
-		flipDiggerDirection(digger);
-		digger.position.y += DIGGERSPEED;
-    	digger.prevDirection = UPDIR;
-	}
-	if(keyWentDown('X')){
-		hitOnce = 0;
-		switch(digger.diggerDirection){
-			case RIGHTDIR:{
-				var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
-			}break;
-			case LEFTDIR:{
-				var bullet = createSprite(digger.position.x-(GRIDSIZE/2), digger.position.y,-GRIDSIZE,5);
-			}break;
-			case UPDIR:{
-				var bullet = createSprite(digger.position.x, digger.position.y+(GRIDSIZE/2),-GRIDSIZE,5);
-			}break;
-			case DOWNDIR:{
-				var bullet = createSprite(digger.position.x, digger.position.y-(GRIDSIZE/2),GRIDSIZE,5);
-			}break;
-			default:{
-				var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+			if(enemies.length > 0){
+				for(var i = 0; i < enemies.length; i++){
+						enemies.get(i).checkLocation();
+						if(enemies.get(i).pausedState > 0){
+							enemies.get(i).pausedState-=2;
+							if(enemies.get(i).pausedState == 0){
+								deflateEnemy(enemies.get(i));
+							}
+						}
+				}
+				if(!keyIsPressed){
+					switch(digger.prevDirection){
+						case RIGHTDIR:{
+							digger.changeAnimation('stillRight');
+						}break;
+						case LEFTDIR:{
+							digger.changeAnimation('stillLeft');
+						}break;
+						case UPDIR:{
+							digger.changeAnimation('stillDown');
+						}break;
+						case DOWNDIR:{
+							digger.changeAnimation('stillup');
+						}break;
+						default:{
+							digger.changeAnimation('stillRight');
+						}
+					}
+				}
+			
+				if(keyDown(LEFT_ARROW)){
+					digger.changeAnimation('left');
+					digger.diggerDirection = LEFTDIR;
+					flipDiggerDirection(digger);
+			    	digger.position.x -= DIGGERSPEED;
+			    	digger.prevDirection = LEFTDIR;
+			    }
+				if(keyDown(RIGHT_ARROW)){
+					digger.changeAnimation('right');
+					digger.diggerDirection = RIGHTDIR;
+					flipDiggerDirection(digger);
+					digger.position.x += DIGGERSPEED;
+					digger.prevDirection = RIGHTDIR;
+				}
+				if(keyDown(UP_ARROW)){
+					digger.changeAnimation('up');
+					digger.diggerDirection = DOWNDIR;
+					flipDiggerDirection(digger);
+					digger.position.y -= DIGGERSPEED;
+					digger.prevDirection = DOWNDIR;
+				}
+				if(keyDown(DOWN_ARROW)){
+					digger.changeAnimation('down');		
+					digger.diggerDirection = UPDIR;
+					flipDiggerDirection(digger);
+					digger.position.y += DIGGERSPEED;
+			    	digger.prevDirection = UPDIR;
+				}
+				if(keyWentDown('X')){
+					hitOnce = 0;
+					switch(digger.diggerDirection){
+						case RIGHTDIR:{
+							var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+						}break;
+						case LEFTDIR:{
+							var bullet = createSprite(digger.position.x-(GRIDSIZE/2), digger.position.y,-GRIDSIZE,5);
+						}break;
+						case UPDIR:{
+							var bullet = createSprite(digger.position.x, digger.position.y+(GRIDSIZE/2),-GRIDSIZE,5);
+						}break;
+						case DOWNDIR:{
+							var bullet = createSprite(digger.position.x, digger.position.y-(GRIDSIZE/2),GRIDSIZE,5);
+						}break;
+						default:{
+							var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+						}
+					}
+					
+					bullet.depth = enemies.get(0).depth-1;
+					bullet.rotation = digger.diggerDirection;
+					bullet.setCollider("rectangle", 0,0, GRIDSIZE,5);
+			   		bullet.life = 10;
+			   		bullets.add(bullet);
+				}
+
+				enemies.overlap(blocks,hitBlock);
+				enemies.overlap(enemies,hitEnemy);
+				enemies.overlap(emptyBlocks,hitEmptyBlock);
+				enemies.overlap(digger, diggerKilled);
+
+				digger.overlap(emptyBlocks,diggerHitBlock);
+				digger.overlap(blocks,diggerHit);
+
+				bullets.overlap(enemies,diggerHitEnemy);
+			}else{
+				showGameOver();
 			}
+		}else{
+		 	showGameOver();
 		}
-		
-		bullet.depth = enemies.get(0).depth-1;
-		bullet.rotation = digger.diggerDirection;
-		bullet.setCollider("rectangle", 0,0, GRIDSIZE,5);
-   		bullet.life = 10;
-   		bullets.add(bullet);
+
+		background(110, 190, 200);
+
+		drawSprites();
 	}
-
-	enemies.overlap(blocks,hitBlock);
-	enemies.overlap(enemies,hitEnemy);
-	enemies.overlap(emptyBlocks,hitEmptyBlock);
-	enemies.overlap(digger, diggerKilled);
-
-	digger.overlap(emptyBlocks,diggerHitBlock);
-	digger.overlap(blocks,diggerHit);
-
-	bullets.overlap(enemies,diggerHitEnemy);
-
-	background(110, 190, 200);
-
-	drawSprites();
 }
 
-function digger(){
+function createDigger(){
 	var tmp = createSprite(GRIDSIZE,(height/SPLITHEIGHT)-GRIDSIZE,GRIDSIZE/2,GRIDSIZE/2);
 	tmp.shapeColor = color(0,0,255);
 	tmp.diggerDirection; 
-	tmp.diggerPrevDirection;
+	tmp.prevDirection;
+
+	tmp.addAnimation('stillLeft', diggerLeft1);
+	tmp.addAnimation("left", diggerLeft1, diggerLeft2);
+	tmp.addAnimation('stillRight', diggerRight1);
+	tmp.addAnimation('right',diggerRight1,diggerRight2);
+	tmp.addAnimation('stillup', diggerUp1);
+	tmp.addAnimation('up',diggerUp1,diggerUp2);
+	tmp.addAnimation('stillDown', diggerDown1);
+	tmp.addAnimation('down',diggerDown1,diggerDown2);
 
 	return tmp;
 }
@@ -404,7 +476,7 @@ function block(x,y,color){
 }
 
 function loadDigger(){
-	digger = digger();
+	digger = createDigger();
 }
 
 function loadEnemies(){
@@ -447,7 +519,6 @@ function hitEnemy(enemy){
 
 function hitEmptyBlock(enemy,blk){
 	if(blk.type != "empty"){
-		//enemy.checkDirection(enemy.prevDirection,blk);
 		enemy.checkDirection();
 		enemy.updateMoves();
 	}
@@ -487,8 +558,8 @@ function diggerHit(dig,blk){
 	switch(digger.diggerDirection) {
 	    case RIGHTDIR:{
 		    	if(tmp.type === "full"){
-		    		if(blk.position.y != dig.position.y){
-		    			dig.position.y = blk.position.y;
+		    		if(tmp.position.y != dig.position.y){
+		    			dig.position.y = tmp.position.y;
 		    		}
 		    		changeBlock(tmp,"horizontal");
 		    	}
@@ -496,17 +567,17 @@ function diggerHit(dig,blk){
 	        break;
 	    case DOWNDIR:{
 		    	if(tmp.type === "full"){
-		    		if(blk.position.x != dig.position.x){
-		    			dig.position.x = blk.position.x;
-		    		}
+		    		if(tmp.position.x != dig.position.x){
+		    			dig.position.x = tmp.position.x;
+	    			}
 		    		changeBlock(tmp,"vertical");
 		    	}
 	    	}	
 	        break;
 	    case LEFTDIR:{
 		    	if(tmp.type === "full"){
-		    		if(blk.position.y != dig.position.y){
-		    			dig.position.y = blk.position.y;
+		    		if(tmp.position.y != dig.position.y){
+		    			dig.position.y = tmp.position.y;
 		    		}
 		    		changeBlock(tmp,"horizontal");
 		    	}
@@ -514,9 +585,9 @@ function diggerHit(dig,blk){
 	        break;
 	    case UPDIR:{
 		    	if(tmp.type === "full"){
-		    		if(blk.position.x != dig.position.x){
-		    			dig.position.x = blk.position.x;
-		    		}
+		    		if(tmp.position.x != dig.position.x){
+		    			dig.position.x = tmp.position.x;
+	    			}
 		    		changeBlock(tmp,"vertical");
 		    	}
 	    	}	
@@ -564,17 +635,32 @@ function deflateEnemy(enemy){
 	for(var i = enemy.blowupState; i > 1; i--){
 		enemy.scale -= .2;
 	}
+	enemy.blowupState = 0;
 	enemy.setSpeed(ENEMYSPEED,enemy.checkDirection());
 }
 
 function diggerKilled(enemy){
-	enemy.remove();
+	for(var i = 0; i < enemies.length; i++){
+		enemies.get(i).setSpeed(0,enemies.get(i).direction);
+	}
 	console.log('DIGGER KILLED - PLAY DEATH SEQUENCE');
+	showGameOver();	
 }
 
 function enemyKilled(enemy){
 	enemy.remove(); //REMOVE ENEMY ANIMATION
 	console.log('ENEMY KILED');
+}
+
+function showStartGame(){
+	background(0,0,0);
+	if(keyIsPressed){
+		STARTGAME = true;
+	}
+}
+function showGameOver(){
+	updateSprites(false);
+	GAMEOVER = true;
 }
 
 function flipDirection(enemy){
