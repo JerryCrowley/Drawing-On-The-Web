@@ -3,8 +3,7 @@
 //Dig Dug
 
 
-/*FIX CHANGING DIRECTIONS ON TOP SQUARE */
-/*FIX CHANGING DIRECTIONS */
+/*FIX ENEMY DEATH - THEY MOVE WHEN BLOWNUP & NEED ANIMATION */
 
 var LOADLEVEL;
 var GAMEOVER;
@@ -66,10 +65,25 @@ var pookaUp2;
 var pookaDown1;
 var pookaDown2;
 
-var fullBlock;
-var vertBlock;
-var horBlock;
-var emptyBlock;
+var blueFullBlock;
+var blueVertBlock;
+var blueHorBlock;
+var blueEmptyBlock;
+
+var goldFullBlock;
+var goldVertBlock;
+var goldHorBlock;
+var goldEmptyBlock;
+
+var redFullBlock;
+var redVertBlock;
+var redHorBlock;
+var redEmptyBlock;
+
+var greenFullBlock;
+var greenVertBlock;
+var greenHorBlock;
+var greenEmptyBlock;
 
 function preload(){
 	//LOAD IMAGES HERE
@@ -103,10 +117,25 @@ function preload(){
 	pookaDown1  = loadImage("digDug_209.png");
 	pookaDown2  = loadImage("digDug_208.png");
 
-	fullBlock   = loadImage("fullBlock.png");
-	vertBlock   = loadImage("vertBlock.png");
-	horBlock    = loadImage("horBlock.png");
-	emptyBlock  = loadImage("emptyBlock.png");
+	blueFullBlock   = loadImage("blueFullBlock.png");
+	blueVertBlock   = loadImage("blueVertBlock.png");
+	blueHorBlock    = loadImage("blueHorBlock.png");
+	blueEmptyBlock  = loadImage("blueEmptyBlock.png");
+
+	goldFullBlock   = loadImage("goldFullBlock.png");
+	goldVertBlock   = loadImage("goldVertBlock.png");
+	goldHorBlock    = loadImage("goldHorBlock.png");
+	goldEmptyBlock  = loadImage("goldEmptyBlock.png");
+
+	redFullBlock   = loadImage("redFullBlock.png");
+	redVertBlock   = loadImage("redVertBlock.png");
+	redHorBlock    = loadImage("redHorBlock.png");
+	redEmptyBlock  = loadImage("redEmptyBlock.png");
+
+	greenFullBlock   = loadImage("greenFullBlock.png");
+	greenVertBlock   = loadImage("greenVertBlock.png");
+	greenHorBlock    = loadImage("greenHorBlock.png");
+	greenEmptyBlock  = loadImage("greenEmptyBlock.png");
 }
 
 function setup(){
@@ -436,32 +465,40 @@ function enemy(x,y,type){
 
 		if(!this.intersections[[xpos,ypos]]){
 			tmp = [];
-			if((leftBlock)&&(leftBlock.type != "full")){
-				if(this.prevDirection == LEFTDIR)
+			if((leftBlock)&&((leftBlock.type != "full")&&(leftBlock.type != "vertical"))){
+				if(this.prevDirection == RIGHTDIR){//MAKE CONDITION FOR LEFT/RIGHT
 					var cond = true;
-				else
+				}
+				else{
 					var cond = false;
+				}
 				tmp[LEFT] = [leftBlock,cond];
 			}
-			if((rightBlock)&&(rightBlock.type != "full")){
-				if(this.prevDirection == RIGHTDIR)
+			if((rightBlock)&&((rightBlock.type != "full")&&(rightBlock.type != "vertical"))){
+				if(this.prevDirection == LEFTDIR){
 					var cond = true;
-				else
+				}
+				else{
 					var cond = false;
+				}
 				tmp[RIGHT] = [rightBlock,cond];
 			}
-			if((upBlock)&&(upBlock.type != "full")){
-				if(this.prevDirection == UPDIR)
+			if((upBlock)&&((upBlock.type != "full")&&(upBlock.type != "horizontal"))){
+				if(this.prevDirection == UPDIR){
 					var cond = true;
-				else
+				}
+				else{
 					var cond = false;
+				}
 				tmp[UP] = [upBlock,cond];
 			}
-			if((downBlock)&&(downBlock.type != "full")){
-				if(this.prevDirection == DOWNDIR)
+			if((downBlock)&&((downBlock.type != "full")&&(downBlock.type != "horizontal"))){
+				if(this.prevDirection == DOWNDIR){
 					var cond = true;
-				else
+				}
+				else{
 					var cond = false;
+				}
 				tmp[DOWN] = [downBlock,cond];
 			}
 			this.intersections[[xpos,ypos]] = tmp;
@@ -505,29 +542,33 @@ function enemy(x,y,type){
 			if(tmp[UP] && (tmp[UP][1] === false)){
 				direction = UPDIR;
 				tmp[UP][1] = true;
-			}if(tmp[DOWN] && (tmp[DOWN][1] === false)){
+			}else if(tmp[DOWN] && (tmp[DOWN][1] === false)){
 				direction = DOWNDIR;
 				tmp[DOWN][1] = true;
-			}if(tmp[RIGHT] && (tmp[RIGHT][1] === false)){
+			}else if(tmp[RIGHT] && (tmp[RIGHT][1] === false)){
 				direction = RIGHTDIR;
 				tmp[RIGHT][1] = true;
-			}if(tmp[LEFT] && (tmp[LEFT][1] === false)){
+			}else if(tmp[LEFT] && (tmp[LEFT][1] === false)){
 				direction = LEFTDIR;
 				tmp[LEFT][1] = true;
+			}else{
+				direction = flipDirection(direction);
 			}
 		}else if(direction === "vertical"){
 			if(tmp[RIGHT] && (tmp[RIGHT][1] === false)){
 				direction = RIGHTDIR;
 				tmp[RIGHT][1] = true;
-			}if(tmp[LEFT] && (tmp[LEFT][1] === false)){
+			}else if(tmp[LEFT] && (tmp[LEFT][1] === false)){
 				direction = LEFTDIR;
 				tmp[LEFT][1] = true;
-			}if(tmp[UP] && (tmp[UP][1] === false)){
+			}else if(tmp[UP] && (tmp[UP][1] === false)){
 				direction = UPDIR;
 				tmp[UP][1] = true;
-			}if(tmp[DOWN] && (tmp[DOWN][1] === false)){
+			}else if(tmp[DOWN] && (tmp[DOWN][1] === false)){
 				direction = DOWNDIR;
 				tmp[DOWN][1] = true;
+			}else{
+				direction = flipDirection(direction);
 			}
 		}
 		return direction;
@@ -561,9 +602,24 @@ function enemy(x,y,type){
 }
 
 
-function block(x,y){
+function block(x,y,blkcolor){
 	var tmp = createSprite(x,y,GRIDSIZE,GRIDSIZE);
-	tmp.addImage(fullBlock)
+	tmp.blkcolor = blkcolor;
+	switch(blkcolor){
+			case "green":{
+				tmp.addImage(greenFullBlock);
+			}break;
+			case "red":{
+				tmp.addImage(redFullBlock);
+			}break;
+			case "gold":{
+				tmp.addImage(goldFullBlock);
+			}break;
+			case "blue":{
+				tmp.addImage(blueFullBlock);
+			}break;
+			default:
+	}
 	tmp.type = "full";
 
 	return tmp;
@@ -584,22 +640,32 @@ function loadEnemies(){
 }
 
 function loadBlocks(){
-	var ypos = (height/SPLITHEIGHT);
+	var ypos  = (height/SPLITHEIGHT);
+	var count = 0;
 
 	for(var i = 0; i <= ((height-(height/SPLITHEIGHT))/GRIDSIZE); i++){
 		var xpos = GRIDSIZE/2; 
 
 		for(var j = 0; j <= (width/GRIDSIZE); j++){
-			if(j%2 == 0)
-				var tmpBlock = block(xpos,ypos);
-			else
-				var tmpBlock = block(xpos,ypos);
+			var color; 
+			if(count < (((height-(height/SPLITHEIGHT))/GRIDSIZE)/4)){
+				color = "blue";
+			}else if((count >= (((height-(height/SPLITHEIGHT))/GRIDSIZE)/4)) && (count < (((height-(height/SPLITHEIGHT))/GRIDSIZE)/2))){
+				color = "green";
+			}else if((count >= (((height-(height/SPLITHEIGHT))/GRIDSIZE)/2)) && (count < (3*(((height-(height/SPLITHEIGHT))/GRIDSIZE)/4)))){
+				color = "gold";
+			}else if((height > (3*(((height-(height/SPLITHEIGHT))/GRIDSIZE)/4)))){
+				color = "red"
+			}
+			
+			var tmpBlock = block(xpos,ypos,color);
 
 			blocks.add(tmpBlock);
 			grid[[xpos,ypos]] = tmpBlock;
 			xpos += GRIDSIZE;
 		}
 		ypos += GRIDSIZE; 
+		count += 1;
 	}
 	randomLines();
 }
@@ -787,15 +853,57 @@ function changeBlock(tmpblock,direction){
 
 	if(direction === "horizontal"){
 		tmpblock.type = "horizontal";
-		tmpblock.addImage(horBlock);
+		switch(tmpblock.blkcolor){
+				case "green":{
+					tmpblock.addImage(greenHorBlock);
+				}break;
+				case "red":{
+					tmpblock.addImage(redHorBlock);
+				}break;
+				case "gold":{
+					tmpblock.addImage(goldHorBlock);
+				}break;
+				case "blue":{
+					tmpblock.addImage(blueHorBlock);
+				}break;
+				default:
+		}
 	}
 	else if(direction === "vertical"){
 		tmpblock.type = "vertical";
-		tmpblock.addImage(vertBlock);
+		switch(tmpblock.blkcolor){
+			case "green":{
+				tmpblock.addImage(greenVertBlock);
+			}break;
+			case "red":{
+				tmpblock.addImage(redVertBlock);
+			}break;
+			case "gold":{
+				tmpblock.addImage(goldVertBlock);
+			}break;
+			case "blue":{
+				tmpblock.addImage(blueVertBlock);
+			}break;
+			default:
+		}
 	}
 	else if(direction === "empty"){
 		tmpblock.type = "empty";
-		tmpblock.addImage(emptyBlock);
+		switch(tmpblock.blkcolor){
+			case "green":{
+				tmpblock.addImage(greenEmptyBlock);
+			}break;
+			case "red":{
+				tmpblock.addImage(redEmptyBlock);
+			}break;
+			case "gold":{
+				tmpblock.addImage(goldEmptyBlock);
+			}break;
+			case "blue":{
+				tmpblock.addImage(blueEmptyBlock);
+			}break;
+			default:
+		}
 	}
 
 	blocks.remove(tmpblock);
