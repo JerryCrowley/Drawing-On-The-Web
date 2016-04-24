@@ -3,6 +3,7 @@
 //Dig Dug
 
 
+/*FIX ENEMY DEATH - FIX HOW THEY REACT WHEN TOUCHED BY BULLET */
 /*FIX ENEMY DEATH - THEY MOVE WHEN BLOWNUP & NEED ANIMATION */
 
 var LOADLEVEL;
@@ -85,57 +86,125 @@ var greenVertBlock;
 var greenHorBlock;
 var greenEmptyBlock;
 
+var upBullet;   
+var downBullet;  
+var leftBullet; 
+var rightBullet; 
+
+var pookaRightBlow1; 
+var pookaRightBlow2;
+var pookaRightBlow3;
+var pookaDownBlow1;  
+var pookaDownBlow2;  
+var pookaDownBlow3;  
+var pookaLeftBlow1; 
+var pookaLeftBlow2; 
+var pookaLeftBlow3;  
+var pookaUpBlow1;    
+var pookaUpBlow2;   
+var pookaUpBlow3;
+
+// var fygarRightBlow1; 
+// var fygarRightBlow2;
+// var fygarRightBlow3;
+// var fygarDownBlow1;  
+// var fygarDownBlow2;  
+// var fygarDownBlow3;  
+// var fygarLeftBlow1; 
+// var fygarLeftBlow2; 
+// var fygarLeftBlow3;  
+// var fygarUpBlow1;    
+// var fygarUpBlow2;   
+// var fygarUpBlow3;
+
+var cloud1;
+var cloud2;
+
 function preload(){
-	//LOAD IMAGES HERE
-	diggerRight1 = loadImage("digDug_05.png"); 
-	diggerRight2 = loadImage("digDug_07.png");
-	diggerLeft1  = loadImage("digDug_21.png");
-	diggerLeft2  = loadImage("digDug_23.png");
-	diggerUp1	 = loadImage("digDug_88.png");
-	diggerUp2    = loadImage("digDug_89.png");
-	diggerDown1  = loadImage("digDug_46.png");
-	diggerDown2  = loadImage("digDug_48.png"); 
+	//LOAD IMAGES 
+	diggerRight1 = loadImage("assets/digDug_05.png"); 
+	diggerRight2 = loadImage("assets/digDug_07.png");
+	diggerLeft1  = loadImage("assets/digDug_21.png");
+	diggerLeft2  = loadImage("assets/digDug_23.png");
+	diggerUp1	 = loadImage("assets/digDug_88.png");
+	diggerUp2    = loadImage("assets/digDug_89.png");
+	diggerDown1  = loadImage("assets/digDug_46.png");
+	diggerDown2  = loadImage("assets/digDug_48.png"); 
 
-	startGameImage = loadImage("startScreen.png");
+	startGameImage = loadImage("assets/startScreen.png");
 
-	fygarRight1 = loadImage("digDug_164.png");
-	fygarRight2 = loadImage("digDug_166.png");
-	fygarLeft1  = loadImage("digDug_204.png");
-	fygarLeft2  = loadImage("digDug_205.png");
-	fygarUp1    = loadImage("digDug_202.png");
-	fygarUp2    = loadImage("digDug_203.png");
-	fygarDown1  = loadImage("digDug_200.png");
-	fygarDown2  = loadImage("digDug_201.png");
+	fygarRight1 = loadImage("assets/digDug_164.png");
+	fygarRight2 = loadImage("assets/digDug_166.png");
+	fygarLeft1  = loadImage("assets/digDug_204.png");
+	fygarLeft2  = loadImage("assets/digDug_205.png");
+	fygarUp1    = loadImage("assets/digDug_202.png");
+	fygarUp2    = loadImage("assets/digDug_203.png");
+	fygarDown1  = loadImage("assets/digDug_200.png");
+	fygarDown2  = loadImage("assets/digDug_201.png");
 
 
-	pookaRight1 = loadImage("digDug_207.png");
-	pookaRight2 = loadImage("digDug_206.png");
-	pookaLeft1  = loadImage("digDug_213.png");
-	pookaLeft2  = loadImage("digDug_212.png");
-	pookaUp1    = loadImage("digDug_211.png");
-	pookaUp2    = loadImage("digDug_210.png");
-	pookaDown1  = loadImage("digDug_209.png");
-	pookaDown2  = loadImage("digDug_208.png");
+	pookaRight1 = loadImage("assets/digDug_207.png");
+	pookaRight2 = loadImage("assets/digDug_206.png");
+	pookaLeft1  = loadImage("assets/digDug_213.png");
+	pookaLeft2  = loadImage("assets/digDug_212.png");
+	pookaUp1    = loadImage("assets/digDug_211.png");
+	pookaUp2    = loadImage("assets/digDug_210.png");
+	pookaDown1  = loadImage("assets/digDug_209.png");
+	pookaDown2  = loadImage("assets/digDug_208.png");
 
-	blueFullBlock   = loadImage("blueFullBlock.png");
-	blueVertBlock   = loadImage("blueVertBlock.png");
-	blueHorBlock    = loadImage("blueHorBlock.png");
-	blueEmptyBlock  = loadImage("blueEmptyBlock.png");
+	blueFullBlock   = loadImage("assets/blueFullBlock.png");
+	blueVertBlock   = loadImage("assets/blueVertBlock.png");
+	blueHorBlock    = loadImage("assets/blueHorBlock.png");
+	blueEmptyBlock  = loadImage("assets/blueEmptyBlock.png");
 
-	goldFullBlock   = loadImage("goldFullBlock.png");
-	goldVertBlock   = loadImage("goldVertBlock.png");
-	goldHorBlock    = loadImage("goldHorBlock.png");
-	goldEmptyBlock  = loadImage("goldEmptyBlock.png");
+	goldFullBlock   = loadImage("assets/goldFullBlock.png");
+	goldVertBlock   = loadImage("assets/goldVertBlock.png");
+	goldHorBlock    = loadImage("assets/goldHorBlock.png");
+	goldEmptyBlock  = loadImage("assets/goldEmptyBlock.png");
 
-	redFullBlock   = loadImage("redFullBlock.png");
-	redVertBlock   = loadImage("redVertBlock.png");
-	redHorBlock    = loadImage("redHorBlock.png");
-	redEmptyBlock  = loadImage("redEmptyBlock.png");
+	redFullBlock   = loadImage("assets/redFullBlock.png");
+	redVertBlock   = loadImage("assets/redVertBlock.png");
+	redHorBlock    = loadImage("assets/redHorBlock.png");
+	redEmptyBlock  = loadImage("assets/redEmptyBlock.png");
 
-	greenFullBlock   = loadImage("greenFullBlock.png");
-	greenVertBlock   = loadImage("greenVertBlock.png");
-	greenHorBlock    = loadImage("greenHorBlock.png");
-	greenEmptyBlock  = loadImage("greenEmptyBlock.png");
+	greenFullBlock   = loadImage("assets/greenFullBlock.png");
+	greenVertBlock   = loadImage("assets/greenVertBlock.png");
+	greenHorBlock    = loadImage("assets/greenHorBlock.png");
+	greenEmptyBlock  = loadImage("assets/greenEmptyBlock.png");
+
+	upBullet    = loadImage('assets/digDug_110.png');
+	downBullet  = loadImage('assets/digDug_115.png');
+	leftBullet  = loadImage('assets/digDug_112.png');
+	rightBullet = loadImage('assets/digDug_121.png'); 
+
+	pookaUpBlow1    = loadImage('assets/digDug_220.png');
+	pookaUpBlow2    = loadImage('assets/digDug_221.png');
+	pookaUpBlow3    = loadImage('assets/digDug_222.png');
+	pookaLeftBlow1  = loadImage('assets/digDug_223.png');
+	pookaLeftBlow2  = loadImage('assets/digDug_224.png');
+	pookaLeftBlow3  = loadImage('assets/digDug_225.png');
+	pookaRightBlow1 = loadImage('assets/digDug_226.png');
+	pookaRightBlow2 = loadImage('assets/digDug_227.png');
+	pookaRightBlow3 = loadImage('assets/digDug_228.png');
+	pookaDownBlow1  = loadImage('assets/digDug_229.png');
+	pookaDownBlow2  = loadImage('assets/digDug_230.png');
+	pookaDownBlow3  = loadImage('assets/digDug_231.png');
+
+	//fygarUpBlow1    = loadImage('assets/digDug_220.png');
+	//fygarUpBlow2    = loadImage('assets/digDug_221.png');
+	//fygarUpBlow3    = loadImage('assets/digDug_222.png');
+	//fygarLeftBlow1  = loadImage('assets/digDug_223.png');
+	//fygarLeftBlow2  = loadImage('assets/digDug_224.png');
+	//fygarLeftBlow3  = loadImage('assets/digDug_225.png');
+	//fygarRightBlow1 = loadImage('assets/digDug_226.png');
+	//fygarRightBlow2 = loadImage('assets/digDug_227.png');
+	//fygarRightBlow3 = loadImage('assets/digDug_228.png');
+	//fygarDownBlow1  = loadImage('assets/digDug_229.png');
+	//fygarDownBlow2  = loadImage('assets/digDug_230.png');
+	//fygarDownBlow3  = loadImage('assets/digDug_231.png');
+
+	cloud1 = loadImage('assets/cloud1.png')
+	cloud2 = loadImage('assets/cloud2.png')
 }
 
 function setup(){
@@ -159,6 +228,7 @@ function draw(){
 			if(LOADLEVEL == false){
 				updateSprites(true);
 				loadBlocks();
+				loadClouds();
 				loadEnemies();
 				loadDigger();
 				LOADLEVEL = true;
@@ -169,15 +239,20 @@ function draw(){
 			}
 
 			if(enemies.length > 0){
+				//For each enemy, check if they had been hit by the bullet
+				//If hit, subtract one from its paused state
+				//Should stay paused for 30 frames
 				for(var i = 0; i < enemies.length; i++){
 						enemies.get(i).checkLocation();
 						if(enemies.get(i).pausedState > 0){
-							enemies.get(i).pausedState-=2;
+							enemies.get(i).pausedState-=1;
 							if(enemies.get(i).pausedState == 0){
 								deflateEnemy(enemies.get(i));
 							}
 						}
 				}
+
+				//Digger direction
 				if(!keyIsPressed){
 					switch(digger.prevDirection){
 						case RIGHTDIR:{
@@ -222,28 +297,35 @@ function draw(){
 					digger.position.y += DIGGERSPEED;
 			    	digger.prevDirection = UPDIR;
 				}
+
+				//Shoot bullet
 				if(keyWentDown('X')){
 					hitOnce = 0;
+					var bullet;
 					switch(digger.diggerDirection){
 						case RIGHTDIR:{
-							var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+							bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y);
+							bullet.addImage(rightBullet);
 						}break;
 						case LEFTDIR:{
-							var bullet = createSprite(digger.position.x-(GRIDSIZE/2), digger.position.y,-GRIDSIZE,5);
+							bullet = createSprite(digger.position.x-(GRIDSIZE/2), digger.position.y);
+							bullet.addImage(rightBullet);
 						}break;
 						case UPDIR:{
-							var bullet = createSprite(digger.position.x, digger.position.y+(GRIDSIZE/2),-GRIDSIZE,5);
+							bullet = createSprite(digger.position.x, digger.position.y+(GRIDSIZE/2));
+							bullet.addImage(downBullet);
 						}break;
 						case DOWNDIR:{
-							var bullet = createSprite(digger.position.x, digger.position.y-(GRIDSIZE/2),GRIDSIZE,5);
+							bullet = createSprite(digger.position.x, digger.position.y-(GRIDSIZE/2));
+							bullet.addImage(upBullet);
 						}break;
 						default:{
-							var bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+							bullet = createSprite(digger.position.x+(GRIDSIZE/2), digger.position.y,GRIDSIZE,5);
+							bullet.addImage(rightBullet);
 						}
 					}
 					
 					bullet.depth = enemies.get(0).depth-1;
-					bullet.rotation = digger.diggerDirection;
 					bullet.setCollider("rectangle", 0,0, GRIDSIZE,5);
 			   		bullet.life = 10;
 			   		bullets.add(bullet);
@@ -292,7 +374,7 @@ function enemy(x,y,type){
 	var tmp = createSprite(x,y,GRIDSIZE/2.5,GRIDSIZE/2.5);
 	tmp.type = type;
 	tmp.prevDirection = RIGHTDIR; 
-	tmp.moves = [];
+	//tmp.moves = [];
 	tmp.intersections = [];
 	tmp.blowupState = 0.0;
 	tmp.pausedState = 0;
@@ -306,6 +388,38 @@ function enemy(x,y,type){
 		tmp.addAnimation('up',fygarUp1,fygarUp2);
 		tmp.addAnimation('stillDown', fygarDown1);
 		tmp.addAnimation('down',fygarDown1,fygarDown2);
+
+		// tmp.addAnimation('deflateRight2',fygarRightBlow2,fygarRightBlow1,fygarRight1);
+		// tmp.addAnimation('deflateRight1',fygarRightBlow1,fygarRight1);
+		// tmp.addAnimation('deflateRight',fygarRight1);
+
+		// tmp.addAnimation('deflateLeft2',fygarLeftBlow2,fygarLeftBlow1,fygarLeft1);
+		// tmp.addAnimation('deflateLeft1',fygarLeftBlow1,fygarLeft1);
+		// tmp.addAnimation('deflateLeft',fygarLeft1);
+
+		// tmp.addAnimation('deflateUp2',fygarUpBlow2,fygarUpBlow1,fygarUp1);
+		// tmp.addAnimation('deflateUp1',fygarUpBlow1,fygarUp1);
+		// tmp.addAnimation('deflateUp',fygarUp1);
+
+		// tmp.addAnimation('deflateDown2',fygarDownBlow2,fygarDownBlow1,fygarDown1);
+		// tmp.addAnimation('deflateDown1',fygarDownBlow1,fygarDown1);
+		// tmp.addAnimation('deflateDown',fygarDown1);
+
+		// tmp.addAnimation('rightBlow1',fygarRightBlow1);
+		// tmp.addAnimation('rightBlow2',fygarRightBlow2);
+		// tmp.addAnimation('rightBlow3',fygarRightBlow3);
+
+		// tmp.addAnimation('leftBlow1',fygarLeftBlow1);
+		// tmp.addAnimation('leftBlow2',fygarLeftBlow2);
+		// tmp.addAnimation('leftBlow3',fygarLeftBlow3);
+
+		// tmp.addAnimation('upBlow1',fygarUpBlow1);
+		// tmp.addAnimation('upBlow2',fygarUpBlow2);
+		// tmp.addAnimation('upBlow3',fygarUpBlow3);
+
+		// tmp.addAnimation('downBlow1',fygarDownBlow1);
+		// tmp.addAnimation('downBlow2',fygarDownBlow2);
+		// tmp.addAnimation('downBlow3',fygarDownBlow3);
 	}else if(tmp.type === "pooka"){
 		tmp.addAnimation('stillLeft', pookaLeft1);
 		tmp.addAnimation("left", pookaLeft1, pookaLeft2);
@@ -315,6 +429,38 @@ function enemy(x,y,type){
 		tmp.addAnimation('up',pookaUp1,pookaUp2);
 		tmp.addAnimation('stillDown', pookaDown1);
 		tmp.addAnimation('down',pookaDown1,pookaDown2);
+
+		tmp.addAnimation('deflateRight2',pookaRightBlow2,pookaRightBlow1,pookaRight1);
+		tmp.addAnimation('deflateRight1',pookaRightBlow1,pookaRight1);
+		tmp.addAnimation('deflateRight',pookaRight1);
+
+		tmp.addAnimation('deflateLeft2',pookaLeftBlow2,pookaLeftBlow1,pookaLeft1);
+		tmp.addAnimation('deflateLeft1',pookaLeftBlow1,pookaLeft1);
+		tmp.addAnimation('deflateLeft',pookaLeft1);
+
+		tmp.addAnimation('deflateUp2',pookaUpBlow2,pookaUpBlow1,pookaUp1);
+		tmp.addAnimation('deflateUp1',pookaUpBlow1,pookaUp1);
+		tmp.addAnimation('deflateUp',pookaUp1);
+
+		tmp.addAnimation('deflateDown2',pookaDownBlow2,pookaDownBlow1,pookaDown1);
+		tmp.addAnimation('deflateDown1',pookaDownBlow1,pookaDown1);
+		tmp.addAnimation('deflateDown',pookaDown1);
+
+		tmp.addAnimation('rightBlow1',pookaRightBlow1);
+		tmp.addAnimation('rightBlow2',pookaRightBlow2);
+		tmp.addAnimation('rightBlow3',pookaRightBlow3);
+
+		tmp.addAnimation('leftBlow1',pookaLeftBlow1);
+		tmp.addAnimation('leftBlow2',pookaLeftBlow2);
+		tmp.addAnimation('leftBlow3',pookaLeftBlow3);
+
+		tmp.addAnimation('upBlow1',pookaUpBlow1);
+		tmp.addAnimation('upBlow2',pookaUpBlow2);
+		tmp.addAnimation('upBlow3',pookaUpBlow3);
+
+		tmp.addAnimation('downBlow1',pookaDownBlow1);
+		tmp.addAnimation('downBlow2',pookaDownBlow2);
+		tmp.addAnimation('downBlow3',pookaDownBlow3);		
 	}
 
 	enemies.add(tmp);
@@ -322,10 +468,10 @@ function enemy(x,y,type){
 	tmp.move = function() {
 		if(this.blowupState == 0){
 			var direction = this.checkDirection();
-			if(this.moves.length > LENOFTRACK){
-				this.moves.pop();
-			}
-			this.moves.push(direction);
+			// if(this.moves.length > LENOFTRACK){
+			// 	this.moves.pop();
+			// }
+			// this.moves.push(direction);
 			this.setSpeed(ENEMYSPEED,direction);
 			this.prevDirection = direction;
 			this.changeAnimationDirection(direction);
@@ -400,7 +546,6 @@ function enemy(x,y,type){
 		var direction; 
 
 		var xpos  = closest(this.position.x,randomXPos);
-		// Math.round((this.position.x) / GRIDSIZE) * GRIDSIZE;
 		var ypos  =	Math.round((this.position.y) / GRIDSIZE) * GRIDSIZE;
 
 		var left  = xpos-GRIDSIZE;
@@ -463,10 +608,15 @@ function enemy(x,y,type){
 		var upBlock    = grid[[xpos,ypos-GRIDSIZE]];
 		var downBlock  = grid[[xpos,ypos+GRIDSIZE]];
 
+		//When an enemy hits an empty block (a vertical and horizontal path available)
+		//Then we take note of the interestion and possible paths to take
+		//Then we take a path and take note of the direction we went
+		//So that if we get back to the intersection, we can see what paths we took 
+
 		if(!this.intersections[[xpos,ypos]]){
 			tmp = [];
 			if((leftBlock)&&((leftBlock.type != "full")&&(leftBlock.type != "vertical"))){
-				if(this.prevDirection == RIGHTDIR){//MAKE CONDITION FOR LEFT/RIGHT
+				if(this.prevDirection == RIGHTDIR){
 					var cond = true;
 				}
 				else{
@@ -574,29 +724,29 @@ function enemy(x,y,type){
 		return direction;
 	}
 
-	tmp.updateMoves = function(){
-		if((this.velocity.x != -ENEMYSPEED) || (this.velocity.x != ENEMYSPEED)){
-			if(this.moves.length > LENOFTRACK){
-				this.moves.pop();
-			}
-			if(this.velocity.x == 1){
-				this.moves.push(RIGHTDIR);
-			}else if(this.velocity.x == -1){
-				this.moves.push(LEFTDIR);
-			}
-		}
+	// tmp.updateMoves = function(){
+	// 	if((this.velocity.x != -ENEMYSPEED) || (this.velocity.x != ENEMYSPEED)){
+	// 		if(this.moves.length > LENOFTRACK){
+	// 			this.moves.pop();
+	// 		}
+	// 		if(this.velocity.x == 1){
+	// 			this.moves.push(RIGHTDIR);
+	// 		}else if(this.velocity.x == -1){
+	// 			this.moves.push(LEFTDIR);
+	// 		}
+	// 	}
 
-		if((this.velocity.y != -ENEMYSPEED) || (this.velocity.y != ENEMYSPEED)){
-			if(this.moves.length > LENOFTRACK){
-				this.moves.pop();
-			}
-			if(this.velocity.y == 1){
-				this.moves.push(DOWNDIR);
-			}else if(this.velocity.y == -1){
-				this.moves.push(UPDIR);
-			}
-		}
-	}
+	// 	if((this.velocity.y != -ENEMYSPEED) || (this.velocity.y != ENEMYSPEED)){
+	// 		if(this.moves.length > LENOFTRACK){
+	// 			this.moves.pop();
+	// 		}
+	// 		if(this.velocity.y == 1){
+	// 			this.moves.push(DOWNDIR);
+	// 		}else if(this.velocity.y == -1){
+	// 			this.moves.push(UPDIR);
+	// 		}
+	// 	}
+	// }
 
 	return tmp;
 }
@@ -668,6 +818,13 @@ function loadBlocks(){
 		count += 1;
 	}
 	randomLines();
+}
+
+function loadClouds(){
+	var cld1 = createSprite(150,75,GRIDSIZE,GRIDSIZE);
+	cld1.addImage(cloud1);
+	var cld2 = createSprite(450,130,GRIDSIZE,GRIDSIZE);
+	cld2.addImage(cloud2);
 }
 
 function hitBlock(enemy){
@@ -763,20 +920,60 @@ function diggerHitEnemy(bullet,enemy){
 					enemy.blowupState = 1; 
 				}break;
 				case 1:{
-					enemy.scale = 1.2;
+					switch(enemy.checkDirection()){
+						case RIGHTDIR:{
+						    enemy.changeAnimation('rightBlow1');
+						}break;
+					    case DOWNDIR:{
+							enemy.changeAnimation('downBlow1'); 	   
+				    	}break;
+					    case LEFTDIR:{
+						    enemy.changeAnimation('leftBlow1');
+				    	}break;
+					    case UPDIR:{
+							enemy.changeAnimation('upBlow1');   	
+				    	}break;
+					    default:{}
+					}
 					enemy.blowupState = 2;
 				}break;
 				case 2:{
-					enemy.scale = 1.4;
+					switch(enemy.checkDirection()){
+						case RIGHTDIR:{
+						    enemy.changeAnimation('rightBlow2');
+						}break;
+					    case DOWNDIR:{
+							enemy.changeAnimation('downBlow2'); 	   
+				    	}break;
+					    case LEFTDIR:{
+						    enemy.changeAnimation('leftBlow2');
+				    	}break;
+					    case UPDIR:{
+							enemy.changeAnimation('upBlow2');   	
+				    	}break;
+					    default:{}
+					}
 					enemy.blowupState = 3;
 				}break;
 				case 3:{
-					enemy.scale = 1.6;
+					switch(enemy.checkDirection()){
+						case RIGHTDIR:{
+						    enemy.changeAnimation('rightBlow3');
+						}break;
+					    case DOWNDIR:{
+							enemy.changeAnimation('downBlow3'); 	   
+				    	}break;
+					    case LEFTDIR:{
+						    enemy.changeAnimation('leftBlow3');
+				    	}break;
+					    case UPDIR:{
+							enemy.changeAnimation('upBlow3');   	
+				    	}break;
+					    default:{}
+					}
 					enemy.blowupState = 4;
-				}break;
-				case 4:{
 					enemyKilled(enemy);
-				}
+				}break;
 				default:
 					enemy.scale = 0;
 			}
@@ -786,11 +983,64 @@ function diggerHitEnemy(bullet,enemy){
 }
 
 function deflateEnemy(enemy){
-	for(var i = enemy.blowupState; i > 1; i--){
-		enemy.scale -= .2;
+	switch(enemy.blowupState){
+		case 3:{
+			switch(enemy.checkDirection()){
+				case RIGHTDIR:{
+				    enemy.changeAnimation('deflateRight2');
+				}break;
+			    case DOWNDIR:{
+					enemy.changeAnimation('deflateDown2'); 	   
+		    	}break;
+			    case LEFTDIR:{
+				    enemy.changeAnimation('deflateLeft2');
+		    	}break;
+			    case UPDIR:{
+					enemy.changeAnimation('deflateUp2');   	
+		    	}break;
+			    default:{}
+			}
+		}break;
+		case 2:{
+			switch(enemy.checkDirection()){
+				case RIGHTDIR:{
+				    enemy.changeAnimation('deflateRight1');
+				}break;
+			    case DOWNDIR:{
+					enemy.changeAnimation('deflateDown1'); 	   
+		    	}break;
+			    case LEFTDIR:{
+				    enemy.changeAnimation('deflateLeft1');
+		    	}break;
+			    case UPDIR:{
+					enemy.changeAnimation('deflateUp1');   	
+		    	}break;
+			    default:{}
+			}
+		}break;
+		default:{
+			switch(enemy.checkDirection()){
+				case RIGHTDIR:{
+				    enemy.changeAnimation('deflateRight');
+				}break;
+			    case DOWNDIR:{
+					enemy.changeAnimation('deflateDown'); 	   
+		    	}break;
+			    case LEFTDIR:{
+				    enemy.changeAnimation('deflateLeft');
+		    	}break;
+			    case UPDIR:{
+					enemy.changeAnimation('deflateUp');   	
+		    	}break;
+			    default:{}
+			}
+		}
 	}
+
+	hitOnce = 0;
 	enemy.blowupState = 0;
 	enemy.setSpeed(ENEMYSPEED,enemy.checkDirection());
+	enemy.move();
 }
 
 function diggerKilled(enemy){
@@ -802,12 +1052,11 @@ function diggerKilled(enemy){
 }
 
 function enemyKilled(enemy){
-	enemy.remove(); //REMOVE ENEMY ANIMATION
+	enemy.remove();
 	console.log('ENEMY KILED');
 }
 
 function showStartGame(){
-	//background(0,0,0);
 	image(startGameImage, 0, 0, width, height);
 	if(keyIsPressed){
 		STARTGAME = true;
