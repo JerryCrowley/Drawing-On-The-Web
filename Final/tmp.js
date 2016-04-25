@@ -4,6 +4,8 @@
 
 //STILL HAVE TO LET USER START GAME AFTER GAMEOVER
 //MAYBE HAVE SCORE? 
+//HANDLE RESTART - WHY ARENT ALL SPRITES BEING DELETED?
+//WHY DO THE ENEMIES SOMETIMES FREAK OUT? 
 
 var LOADLEVEL;
 var GAMEOVER;
@@ -26,7 +28,7 @@ var UP    = 2;
 var DOWN  = 3; 
 
 var hitOnce      = 0;
-var numOfEnemies = 1;
+var numOfEnemies = getRandomIntInclusive(5,8);
 var grid         = [];
 var emptyGrid    = [];
 var randomXPos   = [75,125,175,225,275,325,375,425,475,525,575];
