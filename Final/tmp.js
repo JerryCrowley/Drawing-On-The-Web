@@ -2,9 +2,8 @@
 //Drawing on the Web 
 //Dig Dug
 
-
-/*FIX ENEMY DEATH - FIX HOW THEY REACT WHEN TOUCHED BY BULLET */
-/*FIX ENEMY DEATH - THEY MOVE WHEN BLOWNUP & NEED ANIMATION */
+//STILL HAVE TO LET USER START GAME AFTER GAMEOVER
+//MAYBE HAVE SCORE? 
 
 var LOADLEVEL;
 var GAMEOVER;
@@ -27,7 +26,7 @@ var UP    = 2;
 var DOWN  = 3; 
 
 var hitOnce      = 0;
-var numOfEnemies = 5;
+var numOfEnemies = 1;
 var grid         = [];
 var emptyGrid    = [];
 var randomXPos   = [75,125,175,225,275,325,375,425,475,525,575];
@@ -104,21 +103,32 @@ var pookaUpBlow1;
 var pookaUpBlow2;   
 var pookaUpBlow3;
 
-// var fygarRightBlow1; 
-// var fygarRightBlow2;
-// var fygarRightBlow3;
-// var fygarDownBlow1;  
-// var fygarDownBlow2;  
-// var fygarDownBlow3;  
-// var fygarLeftBlow1; 
-// var fygarLeftBlow2; 
-// var fygarLeftBlow3;  
-// var fygarUpBlow1;    
-// var fygarUpBlow2;   
-// var fygarUpBlow3;
+var fygarRightBlow1; 
+var fygarRightBlow2;
+var fygarRightBlow3;
+var fygarDownBlow1;  
+var fygarDownBlow2;  
+var fygarDownBlow3;  
+var fygarLeftBlow1; 
+var fygarLeftBlow2; 
+var fygarLeftBlow3;  
+var fygarUpBlow1;    
+var fygarUpBlow2;   
+var fygarUpBlow3;
 
+var diggerDeath;
+var diggerDeath1;
+var diggerDeath2;
+var diggerDeath3;
+var diggerDeath4;
+var diggerDeath5;
+var diggerDeathCounter = 20;
+
+var gameover; 
+var winner;
 var cloud1;
 var cloud2;
+var tree; 
 
 function preload(){
 	//LOAD IMAGES 
@@ -190,21 +200,30 @@ function preload(){
 	pookaDownBlow2  = loadImage('assets/digDug_230.png');
 	pookaDownBlow3  = loadImage('assets/digDug_231.png');
 
-	//fygarUpBlow1    = loadImage('assets/digDug_220.png');
-	//fygarUpBlow2    = loadImage('assets/digDug_221.png');
-	//fygarUpBlow3    = loadImage('assets/digDug_222.png');
-	//fygarLeftBlow1  = loadImage('assets/digDug_223.png');
-	//fygarLeftBlow2  = loadImage('assets/digDug_224.png');
-	//fygarLeftBlow3  = loadImage('assets/digDug_225.png');
-	//fygarRightBlow1 = loadImage('assets/digDug_226.png');
-	//fygarRightBlow2 = loadImage('assets/digDug_227.png');
-	//fygarRightBlow3 = loadImage('assets/digDug_228.png');
-	//fygarDownBlow1  = loadImage('assets/digDug_229.png');
-	//fygarDownBlow2  = loadImage('assets/digDug_230.png');
-	//fygarDownBlow3  = loadImage('assets/digDug_231.png');
+	fygarDownBlow1  = loadImage('assets/digDug_238.png');
+	fygarDownBlow2  = loadImage('assets/digDug_239.png');
+	fygarDownBlow3  = loadImage('assets/digDug_240.png');
+	fygarRightBlow1 = loadImage('assets/digDug_235.png');
+	fygarRightBlow2 = loadImage('assets/digDug_236.png');
+	fygarRightBlow3 = loadImage('assets/digDug_237.png');
+	fygarLeftBlow1  = loadImage('assets/digDug_232.png');
+	fygarLeftBlow2  = loadImage('assets/digDug_233.png');
+	fygarLeftBlow3  = loadImage('assets/digDug_234.png');
+	fygarUpBlow1    = loadImage('assets/digDug_241.png');
+	fygarUpBlow2    = loadImage('assets/digDug_242.png');
+	fygarUpBlow3    = loadImage('assets/digDug_243.png');
 
-	cloud1 = loadImage('assets/cloud1.png')
-	cloud2 = loadImage('assets/cloud2.png')
+	diggerDeath1 = loadImage('assets/digDug_301.png');
+	diggerDeath2 = loadImage('assets/digDug_302.png');
+	diggerDeath3 = loadImage('assets/digDug_303.png');
+	diggerDeath4 = loadImage('assets/digDug_304.png');
+	diggerDeath5 = loadImage('assets/digDug_305.png');
+
+	gameover = loadImage('assets/gameOver.png');
+	winner   = loadImage('assets/winner.png');
+	cloud1   = loadImage('assets/cloud1.png');
+	cloud2   = loadImage('assets/cloud2.png');
+	tree     = loadImage('assets/tree.png');
 }
 
 function setup(){
@@ -231,6 +250,8 @@ function draw(){
 				loadClouds();
 				loadEnemies();
 				loadDigger();
+
+				diggerDeath = false;
 				LOADLEVEL = true;
 
 				for(var i = 0; i < enemies.length; i++){
@@ -238,7 +259,7 @@ function draw(){
 				}
 			}
 
-			if(enemies.length > 0){
+			if((diggerDeath == false) && (enemies.length > 0)){
 				//For each enemy, check if they had been hit by the bullet
 				//If hit, subtract one from its paused state
 				//Should stay paused for 30 frames
@@ -340,11 +361,19 @@ function draw(){
 				digger.overlap(blocks,diggerHit);
 
 				bullets.overlap(enemies,diggerHitEnemy);
+			}else if(enemies.length == 0){
+				showGameOverScreen(true);
+			  	if((keyIsPressed) && (keyCode != 120)){
+			  		resetSketch();
+			  	}
 			}else{
 				showGameOver();
 			}
 		}else{
-		 	showGameOver();
+		  	showGameOverScreen(false);
+		  	if(keyIsPressed){
+		  		resetSketch();
+		  	}
 		}
 
 		background(110, 190, 200);
@@ -366,6 +395,7 @@ function createDigger(){
 	tmp.addAnimation('up',diggerUp1,diggerUp2);
 	tmp.addAnimation('stillDown', diggerDown1);
 	tmp.addAnimation('down',diggerDown1,diggerDown2);
+	tmp.addAnimation('death',diggerDeath1,diggerDeath2,diggerDeath3,diggerDeath4,diggerDeath5);
 
 	return tmp;
 }
@@ -389,37 +419,37 @@ function enemy(x,y,type){
 		tmp.addAnimation('stillDown', fygarDown1);
 		tmp.addAnimation('down',fygarDown1,fygarDown2);
 
-		// tmp.addAnimation('deflateRight2',fygarRightBlow2,fygarRightBlow1,fygarRight1);
-		// tmp.addAnimation('deflateRight1',fygarRightBlow1,fygarRight1);
-		// tmp.addAnimation('deflateRight',fygarRight1);
+		tmp.addAnimation('deflateRight2',fygarRightBlow2,fygarRightBlow1,fygarRight1);
+		tmp.addAnimation('deflateRight1',fygarRightBlow1,fygarRight1);
+		tmp.addAnimation('deflateRight',fygarRight1);
 
-		// tmp.addAnimation('deflateLeft2',fygarLeftBlow2,fygarLeftBlow1,fygarLeft1);
-		// tmp.addAnimation('deflateLeft1',fygarLeftBlow1,fygarLeft1);
-		// tmp.addAnimation('deflateLeft',fygarLeft1);
+		tmp.addAnimation('deflateLeft2',fygarLeftBlow2,fygarLeftBlow1,fygarLeft1);
+		tmp.addAnimation('deflateLeft1',fygarLeftBlow1,fygarLeft1);
+		tmp.addAnimation('deflateLeft',fygarLeft1);
 
-		// tmp.addAnimation('deflateUp2',fygarUpBlow2,fygarUpBlow1,fygarUp1);
-		// tmp.addAnimation('deflateUp1',fygarUpBlow1,fygarUp1);
-		// tmp.addAnimation('deflateUp',fygarUp1);
+		tmp.addAnimation('deflateUp2',fygarUpBlow2,fygarUpBlow1,fygarUp1);
+		tmp.addAnimation('deflateUp1',fygarUpBlow1,fygarUp1);
+		tmp.addAnimation('deflateUp',fygarUp1);
 
-		// tmp.addAnimation('deflateDown2',fygarDownBlow2,fygarDownBlow1,fygarDown1);
-		// tmp.addAnimation('deflateDown1',fygarDownBlow1,fygarDown1);
-		// tmp.addAnimation('deflateDown',fygarDown1);
+		tmp.addAnimation('deflateDown2',fygarDownBlow2,fygarDownBlow1,fygarDown1);
+		tmp.addAnimation('deflateDown1',fygarDownBlow1,fygarDown1);
+		tmp.addAnimation('deflateDown',fygarDown1);
 
-		// tmp.addAnimation('rightBlow1',fygarRightBlow1);
-		// tmp.addAnimation('rightBlow2',fygarRightBlow2);
-		// tmp.addAnimation('rightBlow3',fygarRightBlow3);
+		tmp.addAnimation('rightBlow1',fygarRightBlow1);
+		tmp.addAnimation('rightBlow2',fygarRightBlow2);
+		tmp.addAnimation('rightBlow3',fygarRightBlow3);
 
-		// tmp.addAnimation('leftBlow1',fygarLeftBlow1);
-		// tmp.addAnimation('leftBlow2',fygarLeftBlow2);
-		// tmp.addAnimation('leftBlow3',fygarLeftBlow3);
+		tmp.addAnimation('leftBlow1',fygarLeftBlow1);
+		tmp.addAnimation('leftBlow2',fygarLeftBlow2);
+		tmp.addAnimation('leftBlow3',fygarLeftBlow3);
 
-		// tmp.addAnimation('upBlow1',fygarUpBlow1);
-		// tmp.addAnimation('upBlow2',fygarUpBlow2);
-		// tmp.addAnimation('upBlow3',fygarUpBlow3);
+		tmp.addAnimation('upBlow1',fygarUpBlow1);
+		tmp.addAnimation('upBlow2',fygarUpBlow2);
+		tmp.addAnimation('upBlow3',fygarUpBlow3);
 
-		// tmp.addAnimation('downBlow1',fygarDownBlow1);
-		// tmp.addAnimation('downBlow2',fygarDownBlow2);
-		// tmp.addAnimation('downBlow3',fygarDownBlow3);
+		tmp.addAnimation('downBlow1',fygarDownBlow1);
+		tmp.addAnimation('downBlow2',fygarDownBlow2);
+		tmp.addAnimation('downBlow3',fygarDownBlow3);
 	}else if(tmp.type === "pooka"){
 		tmp.addAnimation('stillLeft', pookaLeft1);
 		tmp.addAnimation("left", pookaLeft1, pookaLeft2);
@@ -825,6 +855,8 @@ function loadClouds(){
 	cld1.addImage(cloud1);
 	var cld2 = createSprite(450,130,GRIDSIZE,GRIDSIZE);
 	cld2.addImage(cloud2);
+	var tree1  = createSprite(width-30, (height-((height/3)*2))-53, GRIDSIZE, GRIDSIZE);
+	tree1.addImage(tree);
 }
 
 function hitBlock(enemy){
@@ -1045,10 +1077,10 @@ function deflateEnemy(enemy){
 
 function diggerKilled(enemy){
 	for(var i = 0; i < enemies.length; i++){
-		enemies.get(i).setSpeed(0,enemies.get(i).direction);
+		enemies.get(i).setSpeed(0,enemy.prevDirection);
 	}
-	console.log('DIGGER KILLED - PLAY DEATH SEQUENCE');
-	showGameOver();	
+	enemy.remove();
+	diggerDeath = true;
 }
 
 function enemyKilled(enemy){
@@ -1062,9 +1094,29 @@ function showStartGame(){
 		STARTGAME = true;
 	}
 }
+
 function showGameOver(){
-	updateSprites(false);
-	GAMEOVER = true;
+	digger.changeAnimation('death');
+	diggerDeathCounter -= 1; 
+
+	if(diggerDeathCounter == 0){
+		updateSprites(false);
+		LOADLEVEL = false; 
+		GAMEOVER  = true;
+	}
+}
+
+function showGameOverScreen(flag){
+	var gameovr = createSprite(300,400,GRIDSIZE,GRIDSIZE);
+	gameovr.addImage(gameover);	
+	if(flag){
+		var win = createSprite(300,500,GRIDSIZE,GRIDSIZE);
+		win.addImage(winner);
+	}
+}
+
+function resetSketch(){
+	window.location.reload(true); 
 }
 
 function flipDirection(enemy){
