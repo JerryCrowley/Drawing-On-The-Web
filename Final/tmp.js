@@ -126,11 +126,21 @@ var diggerDeath4;
 var diggerDeath5;
 var diggerDeathCounter = 20;
 
+var gameOverFlag    = false;
+var diggerDeathFlag = false;
+
 var gameover; 
 var winner;
 var cloud1;
 var cloud2;
 var tree; 
+
+var gameStartMusic;
+var digDugWalkMusic;
+var digDugDieMusic;
+var gameOverMusic;
+var gameFinishMusic;
+var pumpingMusic;
 
 function preload(){
 	//LOAD IMAGES 
@@ -226,6 +236,13 @@ function preload(){
 	cloud1   = loadImage('assets/cloud1.png');
 	cloud2   = loadImage('assets/cloud2.png');
 	tree     = loadImage('assets/tree.png');
+
+	gameStartMusic  = loadSound('assets/02-game-start-music.mp3');
+	digDugWalkMusic = loadSound('assets/03-digdug-walking.mp3');
+	digDugDieMusic  = loadSound('assets/10-diddug-disappearing.mp3');
+	gameOverMusic   = loadSound('assets/11-game-over-music.mp3');
+	gameFinishMusic = loadSound('assets/12-high-score-music.mp3');
+	pumpingMusic    = loadSound('assets/23-pumping.mp3');
 }
 
 function setup(){
@@ -239,12 +256,34 @@ function setup(){
 	LOADLEVEL   = false;
 	GAMEOVER    = false;
 	STARTGAME   = false;
+
+	gameStartMusic.play();
+
+	digDugWalkMusic.setVolume(0.0);
+	digDugWalkMusic.loop();
+	digDugWalkMusic.play();
+
+	digDugDieMusic.setVolume(0.0);
+	digDugDieMusic.play();
+
+	gameOverMusic.setVolume(0.0);
+	gameOverMusic.play();
+
+	gameFinishMusic.setVolume(0.0);
+	gameFinishMusic.play();
+
+	pumpingMusic.setVolume(0.0);
+	pumpingMusic.play();
 }
 
 function draw(){
 	if(STARTGAME == false){
 		showStartGame();
 	}else{
+		if(gameStartMusic.isPlaying()){
+			gameStartMusic.stop();
+			digDugWalkMusic.jump();
+		}
 		if(GAMEOVER == false){
 			if(LOADLEVEL == false){
 				updateSprites(true);
@@ -277,6 +316,9 @@ function draw(){
 
 				//Digger direction
 				if(!keyIsPressed){
+					if(digDugWalkMusic.isPlaying()){
+						digDugWalkMusic.setVolume(0.0);
+					}
 					switch(digger.prevDirection){
 						case RIGHTDIR:{
 							digger.changeAnimation('stillRight');
@@ -301,24 +343,28 @@ function draw(){
 					digger.diggerDirection = LEFTDIR;
 			    	digger.position.x -= DIGGERSPEED;
 			    	digger.prevDirection = LEFTDIR;
+			    	digDugWalkMusic.setVolume(1.0);
 			    }
 				if(keyDown(RIGHT_ARROW)){
 					digger.changeAnimation('right');
 					digger.diggerDirection = RIGHTDIR;
 					digger.position.x += DIGGERSPEED;
 					digger.prevDirection = RIGHTDIR;
+					digDugWalkMusic.setVolume(1.0);
 				}
 				if(keyDown(UP_ARROW)){
 					digger.changeAnimation('up');
 					digger.diggerDirection = DOWNDIR;
 					digger.position.y -= DIGGERSPEED;
 					digger.prevDirection = DOWNDIR;
+					digDugWalkMusic.setVolume(1.0);
 				}
 				if(keyDown(DOWN_ARROW)){
 					digger.changeAnimation('down');		
 					digger.diggerDirection = UPDIR;
 					digger.position.y += DIGGERSPEED;
 			    	digger.prevDirection = UPDIR;
+			    	digDugWalkMusic.setVolume(1.0);
 				}
 
 				//Shoot bullet
@@ -373,7 +419,7 @@ function draw(){
 			}
 		}else{
 		  	showGameOverScreen(false);
-		  	if(keyIsPressed){
+		  	if((keyIsPressed) && (keyCode != 120)){
 		  		resetSketch();
 		  	}
 		}
@@ -948,6 +994,8 @@ function diggerHitEnemy(bullet,enemy){
 		enemy.pausedState = 30;
 
 		if(keyWentDown('X')){	
+			pumpingMusic.jump();
+			pumpingMusic.setVolume(1.0);
 			switch(enemy.blowupState){
 				case 0:{
 					enemy.scale = 1.0;
@@ -1101,6 +1149,13 @@ function showGameOver(){
 	digger.changeAnimation('death');
 	diggerDeathCounter -= 1; 
 
+	if(diggerDeathFlag == false){
+		digDugWalkMusic.stop();
+		digDugDieMusic.jump();
+		digDugDieMusic.setVolume(1.0);
+		diggerDeathFlag = true;
+	}
+
 	if(diggerDeathCounter == 0){
 		updateSprites(false);
 		LOADLEVEL = false; 
@@ -1114,6 +1169,19 @@ function showGameOverScreen(flag){
 	if(flag){
 		var win = createSprite(300,500,GRIDSIZE,GRIDSIZE);
 		win.addImage(winner);
+		if(gameOverFlag == false){
+			digDugWalkMusic.stop();
+			gameFinishMusic.jump();
+			gameFinishMusic.setVolume(1.0);
+			gameOverFlag = true;
+		}
+	}else{
+		if(gameOverFlag == false){
+			digDugWalkMusic.stop();
+			gameOverMusic.jump();
+			gameOverMusic.setVolume(1.0);
+			gameOverFlag = true;
+		}
 	}
 }
 
