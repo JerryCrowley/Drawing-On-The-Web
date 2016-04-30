@@ -8,12 +8,14 @@ Eigth Assignment for CSCI-UA.0380-002 - Drawing on the Web
 ######Outline
   - Thoughtfully-considered project outline of at least 200 words (3 points)
   - At least one sketch of your idea (2 points)
+
 ######Project
   - Project should incorporate graphical elements such as bitmap images, SVG, and/or styled div tags. (4 points)
   - Project should include durational changes in the form of CSS transitions, CSS animation, or HTML canvas animation. (4 points)
   - Project should use JavaScript to dynamically apply randomness to some aspect of the drawing. (4 points)
   - Well-formed HTML, CSS, and JavaScript. JavaScript and CSS should be linked to in separate, external documents. Project should be in a completed state, with regard for display in current versions of Chrome, Safari, and Firefox. (4 points)
   - Project should be placed under version control in a publicly-accessible Git repository with a descriptive README file. (4 points)
+  
 ######Presentation
   - Well-prepared in-class presentation, 3–4 minutes in length, of project concept and development (5 points)
 
