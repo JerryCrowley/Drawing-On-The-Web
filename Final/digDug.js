@@ -2,11 +2,6 @@
 //Drawing on the Web 
 //Dig Dug
 
-//STILL HAVE TO LET USER START GAME AFTER GAMEOVER
-//MAYBE HAVE SCORE? 
-//HANDLE RESTART - WHY ARENT ALL SPRITES BEING DELETED?
-//WHY DO THE ENEMIES SOMETIMES FREAK OUT? 
-
 var LOADLEVEL;
 var GAMEOVER;
 var STARTGAME;
@@ -594,6 +589,7 @@ function enemy(x,y,type){
 
 		if((this.position.y == ((height/SPLITHEIGHT)-GRIDSIZE)) && ((this.position.x == 0) || (this.position.x == width))){
 			console.log('GAME OVER');
+			showGameOverScreen(false);
 		}else if((this.position.x == RIGHTDIR) || (this.position.x == width) || (this.position.y == height)){
 			flipDirection(this);
 		}
@@ -1177,7 +1173,6 @@ function showGameOverScreen(flag){
 		}
 	}else{
 		if(gameOverFlag == false){
-			digDugWalkMusic.stop();
 			gameOverMusic.jump();
 			gameOverMusic.setVolume(1.0);
 			gameOverFlag = true;
@@ -1359,8 +1354,6 @@ function checkIntersection(coordinates,tmp){
 	return false;
 }
 
-// Returns a random integer between min (included) and max (included)
-// Using Math.round() will give you a non-uniform distribution!
 function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
