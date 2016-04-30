@@ -2,7 +2,7 @@
 ## Assignment 7 - WebGL
 
 Seventh Assignment for CSCI-UA.0380-002 - Drawing on the Web
-[Link to Asignment](http://i6.cims.nyu.edu/~jcc608/drawingOnTheWeb/assignment7/)
+[Link to Assignment](http://i6.cims.nyu.edu/~jcc608/drawingOnTheWeb/assignment7/)
 
 ### Criteria
   - At least one 3D geometric object (3 points)
