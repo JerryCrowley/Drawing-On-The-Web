@@ -20,7 +20,7 @@ Eigth Assignment for CSCI-UA.0380-002 - Drawing on the Web
   - Well-prepared in-class presentation, 3–4 minutes in length, of project concept and development (5 points)
 
 
-Below are the instructions for the assignment 
+### Instructions
 
 Outline
 >Before you begin working on your final project, take some time to consider how you would like to approach it. How will you explore randomness in a way that is of interest to you? What kinds of forms do you intend to create? What kind of interactivity will there be and how will you achieve it?
